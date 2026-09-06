@@ -1,0 +1,6 @@
+{
+  "orchestrator_model": "fable",
+  "reviewer_model": "opus",
+  "max_rounds": 3,
+  "reviewer_count": 2
+}
