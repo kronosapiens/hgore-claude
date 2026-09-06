@@ -13,7 +13,7 @@ Do not invoke a second skill or agent merely to forward the request; continue in
 Use the named PR, or the current branch's PR when one exists; otherwise review the local task diff.
 An existing PR can be read without permission to change its body or post a comment.
 
-Use explicit artifact paths and the primary skill's argument conventions.
+Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.
 These aliases preserve command names, not the old mandatory artifact chain, flags, or cache formats.
 If the dependency is absent, report it and give the installation command:
 `npx skills add kronosapiens/hgore-claude --skill development-workflow --agent claude-code`.

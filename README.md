@@ -14,6 +14,7 @@ npx skills add kronosapiens/hgore-claude --skill development-workflow --agent cl
 
 Add `--global` if you want it available across projects.
 For a local checkout, replace `kronosapiens/hgore-claude` with its absolute directory path.
+Use that local-checkout form to try an unmerged branch; the repository-name command installs from the default branch.
 Installation includes the skill's references, templates, configuration, and Python helper.
 It does not install hooks, a statusline, or project settings.
 Python 3.10+ is required for the offline helper.
@@ -24,21 +25,32 @@ See [model routing](skills/development-workflow/references/models.md) for config
 
 ## Use
 
-Use the project's existing document locations; no `features/` layout is required.
-Supply the desired outcome in the same request when authoring a new spec or plan.
+Describe your intent naturally after `/development-workflow`.
+No operation names, flags, or file paths are required when the request and conversation make the task clear.
+
+```text
+/development-workflow Begin designing a feature that lets users export their data.
+/development-workflow Review the current migration spec and fix substantive issues.
+/development-workflow Implement the next ready chunk, but don't commit or publish anything.
+```
+
+Claude infers the workflow stage and relevant artifacts from your request, the conversation, and project docs.
+It uses existing document locations or project naming conventions; no `features/` layout is required.
+If you say only "begin designing a new feature" without identifying one elsewhere, it asks what you want to build.
+Specify limits naturally, such as "findings only" or "design only"; choosing a workflow stage does not authorize additional actions.
+
+Authoring and execution include review and revision automatically.
+A separate review request is useful for existing artifacts or subsequent changes, not a mandatory duplicate stage.
+You can also ask it to scaffold missing spec/plan documents, check links and dependencies, explain findings, or publish an explicitly authorized PR.
+
+Explicit operations and paths remain optional shorthand:
 
 ```text
 /development-workflow design docs/spec.md --plan docs/implementation.md
-/development-workflow review docs/spec.md docs/implementation.md
-/development-workflow execute docs/implementation.md --chunk extraction
 /development-workflow review code --base main
 ```
 
-Authoring and execution include review and revision automatically.
-A separate review command is useful for existing artifacts or subsequent changes, not a mandatory duplicate stage.
-Use `init . --spec docs/spec.md --plan docs/implementation.md` to scaffold missing documents without overwriting existing files.
-Other operations include `plan`, `chunk`, `lint`, `close`, `ship`, `cleanup`, `explain`, and `resolve`.
-The [primary skill](skills/development-workflow/SKILL.md) documents their inputs.
+The [primary skill](skills/development-workflow/SKILL.md) documents all operations and their routing.
 
 The default process is:
 
@@ -89,7 +101,8 @@ npx skills add kronosapiens/hgore-claude --skill development-workflow execute-pl
 ```
 
 Install `development-workflow` alongside every alias.
-Names are retained, but old positional feature names and legacy flags are not an API compatibility promise: aliases use the explicit paths and operations documented in their `SKILL.md` files.
+Aliases accept natural-language requests for their respective operations, with explicit paths and arguments available as shorthand.
+Names are retained, but old positional feature names and legacy flags are not an API compatibility promise.
 The old shared protocol directories and decision-log templates have been retired.
 Existing project documents are not deleted or migrated by installation.
 

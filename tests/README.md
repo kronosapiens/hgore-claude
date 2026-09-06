@@ -26,6 +26,10 @@ Do not install globally or modify personal Claude settings for this check.
 
 ## Behavioral smoke test
 
+Check natural-language routing in a fresh disposable project with `/development-workflow Begin designing a new feature`.
+Without a feature described in the conversation or project, the agent should ask for the intended outcome, not invent one or demand flags and paths.
+With an existing plan and a request such as "implement the next ready chunk, but don't commit", check that it infers the target while preserving the publishing restriction.
+
 In a disposable project, give the installed skill a spec and implementation plan with concrete, independently assessable defects.
 Request review and local corrections, explicitly withholding permission to commit, push, or publish.
 Run under Fable with Opus reviewers and a small explicit spend limit when supported by the host.

@@ -22,12 +22,30 @@ Run `python3 "${CLAUDE_SKILL_DIR}/scripts/workflow.py" config --root <project-ro
 The defaults recommend a Fable session, explicitly request Opus on each reviewer invocation, allow three revision rounds, and use two reviewers per round.
 Read [model routing](references/models.md) before starting a review.
 
-## Select the requested operation
+## Interpret the user's intent
 
-Arguments: `$ARGUMENTS`.
-Paths containing spaces must be quoted.
-Infer missing paths from the user's request and existing artifacts when the match is unambiguous.
-Ask only when a missing choice materially changes the work.
+Request: `$ARGUMENTS`.
+Treat the request as natural language, not a CLI grammar.
+Infer the operation, scope, and relevant artifacts from the request, conversation, and project context.
+Do not require operation names, flags, or file paths when the intent is clear.
+Use existing document locations or the project's naming conventions for new artifacts.
+Ask only for missing information that materially changes the work, such as an unspecified feature outcome or an ambiguous chunk selection.
+If the user says only "begin designing a new feature" and the conversation does not identify one, ask what they want to build rather than inventing a feature or demanding command syntax.
+Preserve limits such as "findings only", "design only", or "don't commit" when routing; intent inference does not grant additional authority.
+
+Examples:
+
+```text
+/development-workflow Begin designing a feature that lets users export their data.
+/development-workflow Review the current migration spec and fix substantive issues.
+/development-workflow Implement the next ready chunk, but don't commit or publish anything.
+```
+
+## Route internally
+
+Use the table to select the relevant instructions, not as a form the user must fill out.
+Operation names and flags remain optional shorthand for precise requests.
+Quote paths containing spaces when using that shorthand or invoking shell helpers.
 
 | Operation | Inputs | Instructions |
 |---|---|---|

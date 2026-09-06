@@ -2,6 +2,9 @@
 
 The [README](README.md) covers installation and commands.
 The executable instructions live in [development-workflow](skills/development-workflow/SKILL.md).
+Describe intent in natural language after `/development-workflow`; operation names and flags are optional shorthand.
+The orchestrator infers the requested stage and artifacts from the conversation and project context, asking only when missing information materially changes the work.
+This routing preserves the user's scope and authorization limits.
 
 ## Artifacts and judgment
 

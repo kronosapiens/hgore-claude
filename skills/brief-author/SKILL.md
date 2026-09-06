@@ -13,7 +13,7 @@ Do not invoke a second skill or agent merely to forward the request; continue in
 Treat the requested output as an optional brief, using the supplied spec as context.
 Do not require a brief for other operations.
 
-Use explicit artifact paths and the primary skill's argument conventions.
+Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.
 These aliases preserve command names, not the old mandatory artifact chain, flags, or cache formats.
 If the dependency is absent, report it and give the installation command:
 `npx skills add kronosapiens/hgore-claude --skill development-workflow --agent claude-code`.
