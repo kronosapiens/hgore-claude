@@ -1,189 +1,132 @@
-# hgore-claude
+# Development workflow for Claude Code
 
-An opinionated set of Claude Code skills, hooks, and shell helpers for a **spec-driven, review-heavy software development lifecycle**. Drop them into `~/.claude/` and they work in any repo that adopts the `features/` convention.
-
-The pack turns a feature from an idea into merged code through a chain of small, verifiable artifacts — each one **authored** by a skill and then **prosecuted** by an adversarial review skill before the next layer descends from it. Plans are cheap; bad plans are expensive, so the review happens at every layer, not just at the code.
-
-> This repo is a snapshot of the parts of my `~/.claude/` that are generic enough to share — no personal memory, no project transcripts, no machine-specific paths. Examples use a neutral placeholder domain; swap in your own.
-
-## The lifecycle
-
-```
-vision.md ──/vision-author──▶ /vision-review      root source of truth + spec map (multi-spec projects only)
-   │
-   ▼
-spec.md ──/spec-author──▶ /spec-review            source of truth + its decomposition into briefs
-   │
-   ▼
-brief.md ──/brief-author──▶ /brief-review-v2      "what & why" for one feature
-   │
-   ├──/plan-alignment──▶ pick an architecture direction (recorded as a bound decision)
-   ▼
-engineering-plan.md ──/engineering-plan-author──▶ /engineering-plan-review-v2
-   │                                               the chunk DAG between brief and code
-   ▼
-implementation/<chunk>.md ──/plan-author──▶ /plan-review-v2      one chunk = one PR
-   │
-   ▼
-/execute-plan ──▶ (auto-opens the PR) ──▶ /review-pr-v2 ──▶ merge
-   │
-   ▼ (when every chunk of a plan has shipped)
-/ep-close ──▶ seals the engineering plan; later scope routes to a new track or feature
-```
-
-Each **author** skill writes the artifact, grounding every claim against the repo and self-prosecuting before it emits. Each **review** skill convenes an adversarial tribunal of persona agents (correctness, security, architecture, testing, …) that attack the artifact, file findings with evidence, apply fixes, and return a verdict. `/plan-lint` is the deterministic structural floor the review skills assume has already passed.
-
-**[SDLC.md](./SDLC.md)** explains the methodology behind this — why every layer is authored then adversarially prosecuted, how verdicts converge, and the context-hygiene practice that keeps the reviews honest.
-
-## What's in here
-
-```
-skills/
-  # Project vision (multi-spec projects)
-  vision-author/  vision-review/              vision.md and its spec map — the root the specs descend from
-
-  # Root spec
-  spec-author/  spec-review/                  the project's source-of-truth spec.md + its brief decomposition
-
-  # Feature brief — the "what & why"
-  brief-author/  brief-review-v2/
-  plan-alignment/                             choose an architecture direction, record the pick
-
-  # Engineering plan — the chunk DAG
-  engineering-plan-author/  engineering-plan-review-v2/
-
-  # Per-chunk implementation plans
-  plan-author/  plan-review-v2/
-  plan-lint/                                  deterministic structural lint (briefs, EPs, chunk plans)
-
-  # Execution & shipping
-  execute-plan/                               TDD implementation of one chunk; auto-opens its PR
-  open-pr/                                    commit in logical chunks, push, open a PR
-  review-pr-v2/                               adversarial tribunal on the branch's PR
-  cleanup-worktree/                           tear down a merged chunk's worktree
-  ep-close/                                   seal an engineering plan once every chunk has shipped
-
-  # Blocker handling & scope
-  explain-blockers/                           triage a review's blockers into decisions for you
-  solve-blockers/                             research each blocker to a recommended fix
-  scope-check/                                does the plan deliver each brief Goal in full?
-
-  # Setup & shared internals
-  features-init/                              scaffold the features/ folder in a new project
-  _author-common/ _plan-common/               shared protocols the skills load
-  _review-common/ _spec-common/
-  _vision-common/ _decompose-common/
-hooks/
-  block-self-scheduling.sh                    ask before Claude self-invokes /open-pr, /execute-plan,
-                                              /review-pr-v2, or a scheduler
-statusline.sh                                 ctx-usage | dir | branch | model
-settings.example.json                         wires up the hook + statusline
-```
-
-## Conventions the pack assumes
-
-The skills operate on a `features/<feature>/` layout at your repo root:
-
-```
-features/<feature>/
-  brief.md                 what the feature delivers and why
-  engineering-plan.md      the chunk DAG (or plans/<track>/engineering-plan.md when large)
-  decisions.md             the durable arbitration log
-  implementation/<NN>-<chunk-slug>.md   one per-chunk plan; one chunk = one PR
-```
-
-Plus a project root that carries:
-
-- `spec.md` — the product source of truth (business rules, formulas). A project large enough to carry several specs puts `vision.md` at the root instead, with per-system specs under `specs/<slug>/spec.md` — the vision's spec map decides where each spec's boundary falls.
-- `personas/*.md` — the reviewer lenses (`architecture.md`, `security.md`, `testing.md`, …). The review skills load these; **they must exist at your repo root** or the review stops rather than run under-calibrated.
-- `CLAUDE.md` — your global rules (the skills read it for project conventions and business rules).
-
-Run `/features-init` to scaffold the `features/` folder and its templates in a new project.
+A fork of [hgorelick/hgore-claude](https://github.com/hgorelick/hgore-claude), adapted for spec-driven development with automated adversarial review and revision.
+Fable orchestrates; independent Opus agents do most of the review.
+The human reviews the revised result, not each initial disagreement.
 
 ## Install
 
-Symlinking is recommended — `git pull` then updates your live setup with no extra step.
-
-### Option 1: Symlink (recommended)
+From the target project, install the self-contained primary skill:
 
 ```bash
-git clone https://github.com/hgorelick/hgore-claude.git ~/src/hgore-claude
-cd ~/.claude
-
-# Skills — link the whole directory
-mkdir -p skills
-for d in ~/src/hgore-claude/skills/*/; do ln -s "$d" "skills/$(basename "$d")"; done
-
-# Hook
-mkdir -p hooks
-ln -s ~/src/hgore-claude/hooks/block-self-scheduling.sh hooks/block-self-scheduling.sh
-
-# Statusline
-ln -s ~/src/hgore-claude/statusline.sh statusline.sh
+npx skills add kronosapiens/hgore-claude --skill development-workflow --agent claude-code -y
 ```
 
-### Option 2: Copy
+Add `--global` if you want it available across projects.
+For a local checkout, replace `kronosapiens/hgore-claude` with its absolute directory path.
+Use that local-checkout form to try an unmerged branch; the repository-name command installs from the default branch.
+Installation includes the skill's references, templates, configuration, and Python helper.
+It does not install hooks, a statusline, or project settings.
+Python 3.10+ is required for the offline helper.
+
+Start Claude Code with `claude --model fable` and verify `/development-workflow` is available.
+Your Claude Code version and account must support the requested session and reviewer models.
+See [model routing](skills/development-workflow/references/models.md) for configuration and fallback behavior.
+
+## Use
+
+Describe your intent naturally after `/development-workflow`.
+No operation names, flags, or file paths are required when the request and conversation make the task clear.
+
+```text
+/development-workflow Begin designing a feature that lets users export their data.
+/development-workflow Review the current migration spec and fix substantive issues.
+/development-workflow Implement the next ready chunk, but don't commit or publish anything.
+```
+
+Claude infers the workflow stage and relevant artifacts from your request, the conversation, and project docs.
+It uses existing document locations or project naming conventions; no `features/` layout is required.
+If you say only "begin designing a new feature" without identifying one elsewhere, it asks what you want to build.
+Specify limits naturally, such as "findings only" or "design only"; choosing a workflow stage does not authorize additional actions.
+
+Authoring and execution include review and revision automatically.
+A separate review request is useful for existing artifacts or subsequent changes, not a mandatory duplicate stage.
+You can also ask it to scaffold missing spec/plan documents, check links and dependencies, explain findings, or publish an explicitly authorized PR.
+
+Explicit operations and paths remain optional shorthand:
+
+```text
+/development-workflow design docs/spec.md --plan docs/implementation.md
+/development-workflow review code --base main
+```
+
+The [primary skill](skills/development-workflow/SKILL.md) documents all operations and their routing.
+
+The default process is:
+
+1. Read project instructions, relevant specs, and actual code to calibrate scope and priorities.
+2. Author or revise a spec and implementation plan; add other documents only when useful.
+3. Run up to three review/revision rounds, with two fresh independent reviewers per round, then one fresh final audit.
+4. Hand the mature result to the user, or continue only if the existing request already authorizes the next action.
+
+Reviewers report evidence; the orchestrator adjudicates, applies accepted local corrections, and verifies them.
+Unresolved material findings, missing decisions, or unavailable required checks are reported honestly.
+Ordinary review disagreement does not require human arbitration.
+
+## Configuration and authority
+
+[config.json](skills/development-workflow/config.json) supplies the defaults.
+An optional `.development-workflow.json` at the project root overrides individual fields:
+
+```json
+{
+  "orchestrator_model": "fable",
+  "reviewer_model": "opus",
+  "max_rounds": 3,
+  "reviewer_count": 2
+}
+```
+
+Use two reviewers, or three for a distinct additional perspective.
+The session-model setting records intent; it does not switch the running host model.
+An Astra orchestrator is an alternative only in a host with an explicitly configured way to invoke the chosen reviewers; this pack does not provide cross-provider orchestration.
+Requested and observed models are reported separately.
+
+Current specs and relevant inline comments hold durable rationale; Git history holds historical context.
+There is no decision log, permanent approval ledger, or rule that a previously accepted choice cannot be questioned.
+Temporary review state exists only to resume the current bounded run.
+
+Local corrections are automatic within the requested workflow scope.
+Commits, pushes, PR creation or updates, comments, merges, and deployments require user authorization; a clean verdict grants none.
+A request to open a PR includes the necessary commit and push, without authorizing a merge or deployment.
+Deployment coordination belongs in PR notes and must not drive implementation complexity for an alpha product.
+
+## Existing commands and upgrades
+
+All 21 original skill names remain as optional aliases to the primary skill.
+For example:
 
 ```bash
-git clone https://github.com/hgorelick/hgore-claude.git ~/src/hgore-claude
-cp -R ~/src/hgore-claude/skills/*    ~/.claude/skills/
-cp ~/src/hgore-claude/hooks/*        ~/.claude/hooks/
-cp ~/src/hgore-claude/statusline.sh  ~/.claude/statusline.sh
-chmod +x ~/.claude/hooks/*.sh ~/.claude/statusline.sh
+npx skills add kronosapiens/hgore-claude --skill development-workflow execute-plan review-pr-v2 --agent claude-code -y
 ```
 
-### Wire up `settings.json`
+Install `development-workflow` alongside every alias.
+Aliases accept natural-language requests for their respective operations, with explicit paths and arguments available as shorthand.
+Names are retained, but old positional feature names and legacy flags are not an API compatibility promise.
+The old shared protocol directories and decision-log templates have been retired.
+Existing project documents are not deleted or migrated by installation.
 
-If you don't have a `~/.claude/settings.json`, copy the example. If you do, merge the `statusLine` and `hooks` blocks from `settings.example.json` into it. The hook `command` paths resolve `~` at execution time, so they're portable across machines.
+The original hook and statusline scripts remain optional legacy utilities in this repository.
+The new workflow does not need them, and [settings.example.json](settings.example.json) no longer wires them up.
+An existing `block-self-scheduling` hook may interrupt automatic chaining; inspect your settings and remove that specific hook registration if unwanted, preserving unrelated settings.
+Never replace an existing settings file wholesale.
+
+## Development and validation
 
 ```bash
-cp ~/src/hgore-claude/settings.example.json ~/.claude/settings.json   # only if you have none
+python3 -m unittest discover -s tests -v
+python3 skills/development-workflow/scripts/workflow.py config --root .
+python3 skills/development-workflow/scripts/workflow.py lint README.md SDLC.md
 ```
 
-### Verify
+The helper validates configuration, safely scaffolds two documents, and checks common local Markdown links and explicitly declared dependency tables.
+It does not judge prose quality, enforce a document schema, or replace project tests and independent review.
+See [SDLC.md](SDLC.md) for the full review contract and [tests/README.md](tests/README.md) for installation and behavioral checks.
 
-```bash
-claude --version
-# Then in any repo:
-#   - statusline shows: ctx-usage | dir | branch | model
-#   - /<skill-name> lists brief-author, plan-review-v2, execute-plan, …
-#   - Claude self-invoking /open-pr surfaces a permission prompt (block-self-scheduling)
-```
-
-## How the flow runs in practice
-
-1. `/brief-author <feature>` then `/brief-review-v2 <feature>` until the brief is APPROVED.
-2. `/plan-alignment <feature>` to pick an architecture direction (bound in `decisions.md`).
-3. `/engineering-plan-author <feature>` then `/engineering-plan-review-v2` until CLOSED.
-4. Per chunk: `/plan-author <feature>/<chunk>` then `/plan-review-v2`. A second consecutive APPROVED auto-opens the plan's docs PR.
-5. `/execute-plan <feature>/<chunk>` — TDD implementation inside an isolated worktree; on a clean (COMPLETE) verdict it auto-opens the chunk's PR into `main`.
-6. `/review-pr-v2` on the PR (started fresh so the review is independent of the code-writing session), then merge, then `/cleanup-worktree`.
-7. When the plan's last chunk has merged: `/ep-close` seals the plan. A closed plan accepts no new chunks — later scope routes to an open sibling track, a new track, or a new feature.
-
-When a review returns **NEEDS USER INPUT**, `/explain-blockers` triages the blockers into plain-language decisions, or `/solve-blockers` researches each to a recommended fix.
-
-## What the hook does
-
-**`block-self-scheduling.sh`** — a `PreToolUse` matcher on `Bash`/`Skill`/scheduler tools that returns `ask` when Claude tries to **self-invoke** a hard-to-reverse workflow skill (`/open-pr`, `/execute-plan`, `/review-pr-v2`) or a scheduler. A slash command you type yourself doesn't route through the `Skill` tool, so it only fires on Claude's own programmatic chaining — the thing you want a human in the loop for.
-
-## What the statusline does
-
-`statusline.sh` reads the JSON Claude Code passes on stdin and prints:
-
-```
-<ctx-tokens>/<max> (PCT%) | <dir> | (<branch>*) | [<model>]
-```
-
-Context usage (color-shifting green→yellow→red toward the cap), working-dir basename, git branch (`*` + tint when dirty), and the short model name. Empty sections are skipped.
-
-## Updating
-
-```bash
-cd ~/src/hgore-claude && git pull
-```
-
-Symlinked: that's it. Copied: re-run the relevant `cp` commands.
+This change adapts the pack only.
+The Premise/Theo repository split is a separate implementation exercise, driven from its own Claude Code session.
 
 ## License
 
-MIT — do whatever you want with these. Attribution appreciated but not required.
+MIT.
+Attribution appreciated but not required.

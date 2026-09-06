@@ -1,123 +1,83 @@
-# The SDLC behind the pack
+# Workflow contract
 
-This is the methodology the skills encode. The [README](./README.md) tells you what each skill is and how to install them; this doc explains *why* they're shaped the way they are, so you can use them well — or steal the ideas and build your own.
+The [README](README.md) covers installation and commands.
+The executable instructions live in [development-workflow](skills/development-workflow/SKILL.md).
+Describe intent in natural language after `/development-workflow`; operation names and flags are optional shorthand.
+The orchestrator infers the requested stage and artifacts from the conversation and project context, asking only when missing information materially changes the work.
+This routing preserves the user's scope and authorization limits.
 
-## The core idea
+## Artifacts and judgment
 
-Software fails at the seams between what someone meant, what got planned, and what got built. Most of that failure is invisible until the code exists, at which point it's the most expensive time to find it.
+Start with a durable spec describing the outcome, constraints, boundaries, and acceptance criteria, plus an implementation plan describing the work and verification.
+Read existing project guidance and code before drafting either.
+Select the relevant documents by purpose and scope, not by assuming the highest-numbered spec governs everything.
 
-So the pack refuses to let intent jump straight to code. It forces a feature down a chain of small, written artifacts:
+Briefs, visions, and separate chunk plans are optional aids for genuinely larger work.
+Small changes do not need the whole document hierarchy.
+Chunk boundaries follow behavior, dependencies, and reviewability, not fixed file counts, banned words, or a universal one-chunk/one-PR rule.
+Sequential chunks may touch the same files.
+Parallel work requires genuinely independent changes or explicit coordination.
 
-```
-vision.md  →  spec.md  →  brief.md  →  engineering-plan.md  →  implementation/<chunk>.md  →  code
-```
+Keep important current rationale in the owning spec or a useful inline comment.
+Use Git history for how the work evolved.
+Neither a decision log nor a previous approval can override current evidence or user instructions.
+Project priorities calibrate review severity; an alpha project should not accumulate compatibility layers merely to coordinate deployment.
+Record real operational coordination concerns in PR descriptions instead.
 
-Each artifact **descends** from the one above it — a spec specifies one mechanism cluster the vision states, a brief realizes part of the spec, an engineering plan decomposes one brief, a chunk plan implements one node of that plan, code implements one chunk. Each is small enough to hold in your head and cheap enough to throw away. (The vision layer only exists in projects big enough to carry several specs — `vision.md` at the root, per-system specs under `specs/<slug>/`. A single-spec project starts the chain at `spec.md`.)
+## Automated adversarial review
 
-The decomposition at each seam is a **section of the document that decides it**, never a separate artifact: a vision carries its spec map, a spec carries the decomposition that cuts its briefs, an engineering plan carries its chunk DAG. The document that decides a seam is the document that carries it — so the seam gets prosecuted whenever the document does.
+The orchestrator owns the artifact, edits, and verification.
+Fresh reviewers independently try to falsify it against the requested outcome, project guidance, and repository evidence.
+They do not edit, inherit the author's defense, see each other's initial findings, or launch additional agents.
+Bundled perspectives work without mandatory project persona files.
 
-And each one is **authored** by a skill, then **prosecuted** by a separate adversarial review skill before anything descends from it. Plans are cheap; wrong plans are expensive, so the scrutiny lives at every layer, not just at the code.
+Each run has a bounded revision phase and a separate final audit:
 
-## Author, then prosecute
+1. Establish scope, authorization, artifact version, verification commands, and the round budget.
+2. Launch two fresh reviewers in parallel, optionally three for a distinct additional perspective.
+3. Investigate each finding and accept, reject, or leave it unresolved with evidence.
+4. Apply accepted corrections locally and verify the affected behavior.
+5. Repeat while material concerns or edits need independent review, up to three rounds by default.
+6. Have one new reviewer audit the complete final artifact without previous verdicts or the orchestrator's defense.
 
-Every layer is a pair: an author skill and a review skill.
+The final audit is outside the revision budget and does not permit another edit cycle.
+An accepted or unresolved material audit finding produces an incomplete handoff, not an unbounded retry.
+Optional stylistic preferences do not prolong the loop.
+Rejected findings need factual rebuttals; agreement, prior acceptance, and absence of evidence are not rebuttals.
 
-- The **author** (`/vision-author`, `/spec-author`, `/brief-author`, `/engineering-plan-author`, `/plan-author`) writes the artifact. It grounds every claim against the actual repo — a field, a caller, an endpoint that isn't in the code doesn't get to exist in the plan — and self-prosecutes before it emits, so what lands is already a clean draft, not a first draft.
+Ordinary disagreements stay inside the automated loop.
+The orchestrator does not ask the user to choose between initial reviewer opinions.
+It stops dependent work only when a material product choice, scope expansion, or new authority is genuinely necessary.
+An explicit findings-only request disables local revisions.
 
-- The **review** (`/vision-review`, `/spec-review`, `/brief-review-v2`, `/engineering-plan-review-v2`, `/plan-review-v2`, `/review-pr-v2`) convenes an adversarial tribunal of persona agents — correctness, security, architecture, testing, and more — that *attack* the artifact. Each files findings backed by evidence, the parent applies the fixes inline, and the skill returns a verdict.
+Temporary run state preserves the round count, artifact basis, pending findings, and authorization through compaction.
+It is not committed or treated as durable authority and is removed at handoff unless the user requests a paused run.
+Compaction and newly discovered findings do not reset the budget.
 
-The reviewer is adversarial on purpose. Its job is not to bless the author's work; it's to try to break it and report what survived. That only works if the reviewer isn't the author — which is where context hygiene comes in (below).
+## Verification and handoff
 
-### Verdicts and convergence
+Structural lint checks common local links and explicit dependency graphs, not prose heuristics.
+Repository-required checks still apply, with pre-existing failures distinguished from regressions.
+Verification must cover the behavior affected by corrections, not merely the edited lines.
 
-Reviews don't pass or fail once. They **converge** across re-invocations:
+The possible handoffs are:
 
-- **APPROVED** — nothing left to attack; the artifact is ready for the next layer to descend from it.
-- **CLOSED** — (engineering-plan layer) every open thread is resolved and the plan is sealed.
-- **NEEDS USER INPUT** — the tribunal hit a question only you can answer. It stops and hands you labeled **blockers** rather than guessing.
+- `ready for user review`: the final audit ran, required checks passed, and every material finding is resolved or rejected with evidence.
+- `needs input`: a material product, scope, or authorization decision remains.
+- `review incomplete`: material findings remain, required checks could not finish, or independent reviewers were unavailable.
 
-You re-run a review until it stops finding things. A clean pass means a clean pass; two clean passes in a row means it's genuinely done. The verdict and round print at the very end of every review, in a byte-identical format across all of them, so you never scroll to find where you stand.
+Report consequential changes, important rejected findings, remaining questions, verification, rounds used, and requested versus observed models.
+Include measured time and usage when available, without inventing cost or model observations.
+A ready design is not an implemented feature, and a ready local implementation is not a shipped PR.
 
-### Blockers become decisions, decisions become durable
+## Execution and publishing
 
-When a review returns NEEDS USER INPUT, two skills turn its blockers into forward motion, and they run **in sequence — always explain first, then solve**:
+An implementation request authorizes the selected plan chunk and its automatic local code-review loop.
+Review the actual local diff, including relevant staged, unstaged, and untracked changes; an existing PR is not required.
+Preserve unrelated work, and use a worktree only when isolation helps.
+No special completion marker or duplicate chunk document is required when the plan already supplies sufficient detail.
 
-- **`/explain-blockers`** goes first. It triages the open blockers into a short, ordered list of plain-language decisions — linked ones collapsed into a single call, ordered so the top decision unblocks the ones under it, each with a recommended pick. Now you can see the whole decision landscape before committing to anything.
-- **`/solve-blockers`** goes second. It chases each of those blockers to a concrete, high-confidence recommendation with an evidence trail, then applies the fix on your say-so. It's the research pass, not a substitute for the triage — you run it after `/explain-blockers`, not instead of it.
-
-Both write their resolution to the feature's `decisions.md` — the durable arbitration log. A decision made once stays made. Later layers (and later review rounds) read `decisions.md` and don't re-litigate a `bound` call. That's what stops the pipeline from churning on the same question every time context resets.
-
-`/plan-alignment` is the same move applied *before* the engineering plan exists: it lays out two or three architecture directions for an approved brief, each with the tradeoff it commits you to, and records your pick as a bound decision — so the architecture is a choice you made, not a side effect of whichever way a skill happened to draft.
-
-## The layers, top to bottom
-
-| Artifact | Author | Reviewer | What it fixes in place |
-|---|---|---|---|
-| `vision.md` | `/vision-author` | `/vision-review` | the root source of truth and its spec map (multi-spec projects) |
-| `spec.md` | `/spec-author` | `/spec-review` | the product source of truth — business rules, formulas, invariants — and the decomposition that cuts its briefs |
-| `brief.md` | `/brief-author` | `/brief-review-v2` | one feature's "what & why" — Goals, non-goals, signals |
-| architecture | `/plan-alignment` | — | the direction, bound as a decision |
-| `engineering-plan.md` | `/engineering-plan-author` | `/engineering-plan-review-v2` | the chunk DAG between brief and code |
-| `implementation/<chunk>.md` | `/plan-author` | `/plan-review-v2` | one chunk = one PR |
-| the code | `/execute-plan` | `/review-pr-v2` | the branch's PR |
-
-A large feature can carry more than one engineering plan — call them **tracks**, under `plans/<track>/`. The tracks of one feature **co-deliver**: none ships alone, and merging one to `main` deploys nothing on its own, so the reviewers deliberately don't flag "orphaned" or "half-integrated" states between sibling tracks. They still check that the union of the tracks covers the brief, and that shared contracts between tracks stay consistent.
-
-## The scope gate
-
-An engineering plan can pass its own review — internally sound, well-factored, every chunk clean — and still quietly under-deliver the brief: narrowing a Goal to a subset, a weaker signal, or an action taken before its basis exists. `/engineering-plan-review-v2` prosecutes the plan on its own terms; it doesn't independently re-derive the brief's full intent.
-
-So once the engineering plan returns **CLOSED**, always run **`/scope-check`**. It reads each brief Goal and asks whether the plan delivers it *in full*. Every narrowing it finds comes back as an explicit decision for you: accept the cut — recorded in `decisions.md` — or widen the plan to cover it.
-
-Scope-check closes a loop rather than ending one. If resolving what it finds changes the brief or the engineering plan, the review that previously blessed that artifact no longer holds — so re-run it. A changed brief goes back through `/brief-review-v2`; a changed engineering plan goes back through `/engineering-plan-review-v2`. You drop down to chunk plans only when scope-check comes back clean *and* every artifact it forced a change to has been re-reviewed to a clean verdict.
-
-## The deterministic floor
-
-Before any LLM-judgment review runs, `/plan-lint` runs. It parses the markdown and applies mechanical checks — DAG cycles, "and"-chunks that smuggle two units into one, vague exit criteria, premature abstractions, position-encoded slugs (`01-`, `02-`), review-budget overflow, deferrals with no destination, invariants with no falsifier. No model judgment, milliseconds to run, same answer every time.
-
-This is the floor the review skills *assume has already passed*. It catches the structural defects cheaply and deterministically so the expensive adversarial pass spends its attention on judgment, not on catching a cycle a parser could have found.
-
-## Execution and shipping
-
-Once a chunk plan is APPROVED, `/execute-plan` implements it:
-
-- in an **isolated worktree**, one per chunk, so parallel chunks never collide;
-- **test-first** — the test that proves the behavior comes before the code that satisfies it;
-- **one chunk = one PR** — the unit of review stays small enough to actually review.
-
-On a clean **COMPLETE** verdict, `/execute-plan` opens the chunk's PR into `main` for you. It does this *inline* — a direct commit / push / `gh pr create`, not by invoking `/open-pr` — so the self-scheduling guard never has to fire on the pack's own automation. If execution ends BLOCKED, it opens nothing and tells you why.
-
-Then `/review-pr-v2` runs the adversarial tribunal on the actual PR — the same author-then-prosecute pattern, now against the diff and the passing gates. It applies fixes, re-runs the gates, commits, and posts the verdict to the PR. After merge, `/cleanup-worktree` tears the chunk's worktree down.
-
-When a plan's **last chunk** has merged, `/ep-close` seals it: the closed marker goes into the plan, the closure is bound in `decisions.md`, and every plan-layer skill refuses to add chunks to it from then on. Later scope routes to an open sibling track, a new track, or a new feature — never back into a shipped plan. Invoking `/ep-close` *is* the statement that the implementation is finished; the skill trusts the invocation rather than re-auditing the shipped chunks.
-
-There's a matching automation at the plan layer: when `/plan-review-v2` returns APPROVED **twice in a row**, it opens the plan-doc PR inline, the same way and for the same reason.
-
-## Context hygiene — the practice that makes the reviews honest
-
-**Clear your context before every author and every review skill.**
-
-This is not housekeeping. The whole pack rests on the reviewer being independent of the author. If you write a brief and then review it in the same context, the "reviewer" already believes the brief — it inherits the author's assumptions, remembers why each choice was made, and quietly declines to attack the things it just argued for. That's a rubber stamp with extra steps.
-
-A fresh context per heavy skill restores the adversarial gap:
-
-- the **author** starts clean, grounding against the repo rather than against a conversation that's been drifting for an hour;
-- the **reviewer** meets the artifact cold, with no memory of the intent behind it, and prosecutes what's actually on the page.
-
-So the rhythm is: clear, author, clear, review, clear, next author, and so on. The artifacts on disk (`brief.md`, `decisions.md`, the plan) are the only handoff between contexts — which is exactly why they have to be self-contained, and why the pack works so hard to keep them that way.
-
-**Two exceptions — do *not* clear before these:**
-
-- **`/explain-blockers`** and then **`/solve-blockers`** run *right after* a review that returned NEEDS USER INPUT, in that order and in the same context. They consume that review's verdict and blocker state *in context* to triage it and then research it. Clear first and you've thrown away the very thing they operate on.
-
-The rule of thumb: clear before anything that **produces or prosecutes an artifact**; stay in context for anything that **acts on the review you just got**.
-
-## Why this shape
-
-- **Errors caught early are cheap.** A wrong assumption in a brief costs a sentence to fix. The same assumption discovered in a merged PR costs a revert, a re-plan, and everything built on top of it. The chain front-loads the scrutiny to where fixing is cheapest.
-- **Small artifacts are reviewable.** A 2000-line PR gets a rubber stamp; a one-chunk PR gets read. Every layer is sized to actually fit in a reviewer's head — human or model.
-- **Adversarial beats affirmative.** "Find what's wrong with this" surfaces defects that "does this look ok?" never will. Separating author from reviewer is what keeps that adversarial edge from dulling into agreement.
-- **Decisions compound instead of repeating.** Writing every arbitration to `decisions.md` means the pipeline gets *more* settled as it runs, not less. Context resets don't reopen closed questions.
-- **Determinism where determinism is free.** `plan-lint` proves that anything a parser can check, a parser *should* check — leaving the expensive judgment for the things that genuinely need judgment.
-
-None of this is sacred. It's the shape that fell out of shipping real features and getting burned at each seam. Take the parts that map to how you work, and rewire the rest.
+A review or implementation request alone does not authorize Git commits, pushes, PR publishing, merges, or deployments.
+Honor explicit existing authority without repeatedly asking for it.
+An authorized PR includes the outcome, review and verification evidence, limitations, and any operational coordination notes.
+Completion updates describe what actually happened rather than sealing a plan permanently against future evidence.
