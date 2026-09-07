@@ -1,6 +1,6 @@
 ---
 name: features-init
-description: Scaffold the requested spec and implementation plan using development-workflow.
+description: Scaffold a feature document and optional implementation plan using development-workflow.
 ---
 
 # features-init
@@ -11,6 +11,7 @@ Load its referenced instructions relative to that skill's directory, not this al
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
 Use the project's existing document layout.
+Create one feature document by default; add a separate plan only when requested.
 Do not create decision logs, personas, or a features tree as prerequisites.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.

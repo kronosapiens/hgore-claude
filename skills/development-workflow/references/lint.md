@@ -3,10 +3,11 @@
 Run the bundled Python script on the Markdown artifacts being authored or reviewed:
 
 ~~~sh
-python3 "${CLAUDE_SKILL_DIR}/scripts/workflow.py" lint <spec-path> <plan-path>
+python3 "${CLAUDE_SKILL_DIR}/scripts/workflow.py" lint <feature-path>
 ~~~
 
 Python 3.10+ is required; the script uses only the standard library.
+Include supporting design or plan paths when they are part of the work.
 Exit status is 0 for no findings, 1 for structural findings, and 2 for usage, configuration, or file errors.
 
 The lint checks common inline local Markdown links, single-line link definitions, and dependency tables with `Chunk` (or `Slug`) and `Depends on` columns.

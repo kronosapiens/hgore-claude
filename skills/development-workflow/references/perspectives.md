@@ -13,7 +13,7 @@ For a repository split, account for every moved responsibility and both sides of
 
 ## Behavior, scope, and testing
 
-Trace the requested outcomes through the design, plan, and implementation.
+Trace the feature's acceptance criteria through its design, plan, and implementation, including behavior across chunks.
 Look for omissions, weakened success criteria, regressions, and tests that only restate the implementation.
 Distinguish a real observable result from a completed code path.
 For model-backed behavior, require evaluation criteria appropriate to the user's outcome rather than textual similarity alone.

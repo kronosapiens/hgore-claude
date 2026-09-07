@@ -1,6 +1,6 @@
 ---
 name: spec-review
-description: Review and automatically revise a development spec using development-workflow.
+description: Review and automatically revise a feature or supplied design document using development-workflow.
 ---
 
 # spec-review

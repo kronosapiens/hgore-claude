@@ -1,15 +1,24 @@
-# Complete a plan
+# Close a feature
 
-Read the plan and the available acceptance evidence.
+Resolve the feature from the request or a supporting plan, then read its acceptance criteria and available evidence.
 Use the user's statement of completion and known results; do not reconstruct every commit merely to confirm a stated fact.
 Distinguish reviewed, implemented, and verified work, and preserve any explicitly deferred or unverified scope.
-Do not mark unverified acceptance criteria as passed.
+Check the feature's combined behavior against its acceptance criteria, including integration across chunks where relevant.
+Run missing required checks when possible; unverified criteria keep the feature incomplete.
+Incomplete required reviews and unresolved material findings also prevent completion.
+Only the user can authorize deferring required scope; never shrink the feature merely to close it.
 
-Update the plan's status and the owning docs to reflect the actual outcome.
-Keep useful current rationale beside the design or code it explains.
-Do not create a closure ledger, permanent decision history, or a rule forbidding future changes to the plan.
-Later work follows the project's normal planning conventions.
+Update the relevant maintained project docs to describe delivered behavior, interfaces, and enduring architectural rationale.
+Use useful inline comments for rationale that belongs in code; do not duplicate the whole feature document into project docs.
+If no maintained docs cover a changed contract, add a focused document only when that knowledge needs to persist.
+Record a concise completion outcome and verification evidence in the feature, linking updated docs where useful.
+Mark the feature and any supporting plan complete only when acceptance is verified and the relevant doc updates are finished.
+For a broad legacy spec, close only the requested effort in its plan or section; do not mark the entire spec complete.
+
+Retain the completed feature as historical context.
+Later enhancements normally get a new feature with their own scope and acceptance criteria, using maintained docs and current code as the baseline.
+Do not create a closure ledger or permanent decision history.
 Remove only this run's temporary state; retain project artifacts unless their removal is requested or clearly part of the agreed task.
 
-Closing a plan does not authorize a commit, push, PR update, or merge.
+Closing a feature does not authorize a commit, push, PR update, or merge.
 Use already-given authorization when it covers those actions; otherwise return the local changes for review.

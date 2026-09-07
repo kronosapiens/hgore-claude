@@ -1,6 +1,6 @@
 ---
 name: ep-close
-description: Update a completed implementation plan and owning docs using development-workflow.
+description: Verify feature completion and update the feature, supporting plan, and maintained docs using development-workflow.
 ---
 
 # ep-close
@@ -11,6 +11,7 @@ Load its referenced instructions relative to that skill's directory, not this al
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
 Completion does not authorize a commit or create a permanent closure ledger.
+When given a plan, resolve its owning feature and check the whole requested outcome before closing it.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.
 These aliases preserve command names, not the old mandatory artifact chain, flags, or cache formats.

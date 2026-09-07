@@ -1,6 +1,6 @@
 ---
 name: engineering-plan-review-v2
-description: Review and automatically revise a spec and implementation plan using development-workflow.
+description: Review and automatically revise a feature and its implementation plan using development-workflow.
 ---
 
 # engineering-plan-review-v2
@@ -10,7 +10,7 @@ Read [development-workflow](../development-workflow/SKILL.md) and follow its `re
 Load its referenced instructions relative to that skill's directory, not this alias.
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
-Include the linked spec and check outcome coverage, dependencies, and acceptance criteria.
+Include the owning feature and relevant supporting design; check outcome coverage, dependencies, and acceptance criteria.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.
 These aliases preserve command names, not the old mandatory artifact chain, flags, or cache formats.

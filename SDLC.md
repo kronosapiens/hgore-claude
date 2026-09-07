@@ -3,26 +3,36 @@
 The [README](README.md) covers installation and commands.
 The executable instructions live in [development-workflow](skills/development-workflow/SKILL.md).
 Describe intent in natural language after `/development-workflow`; operation names and flags are optional shorthand.
-The orchestrator infers the requested stage and artifacts from the conversation and project context, asking only when missing information materially changes the work.
+The orchestrator infers the selected feature, requested stage, and artifacts from the conversation and project context, asking only when missing information materially changes the work.
 This routing preserves the user's scope and authorization limits.
 
 ## Artifacts and judgment
 
-Start with a durable spec describing the outcome, constraints, boundaries, and acceptance criteria, plus an implementation plan describing the work and verification.
-Read existing project guidance and code before drafting either.
-Select the relevant documents by purpose and scope, not by assuming the highest-numbered spec governs everything.
+Organize work around a feature: a bounded delivery effort with an observable outcome and completion point.
+Start with one feature document containing scope, acceptance criteria, design, implementation chunks, and verification evidence.
+Read existing project guidance and code before drafting it.
+Use a descriptive feature name and select relevant documents by purpose and scope.
+New features do not require sequential spec versions, and existing specs and plans can supply context or describe the selected effort without migration.
 
-Briefs, visions, and separate chunk plans are optional aids for genuinely larger work.
+Separate designs, implementation plans, briefs, visions, and chunk documents are optional aids for larger work.
+Link supporting documents from the feature and a separate plan back to the feature, keeping each detail in one owning document.
 Small changes do not need the whole document hierarchy.
 Chunk boundaries follow behavior, dependencies, and reviewability, not fixed file counts, banned words, or a universal one-chunk/one-PR rule.
 Sequential chunks may touch the same files.
 Parallel work requires genuinely independent changes or explicit coordination.
 
-Keep important current rationale in the owning spec or a useful inline comment.
-Use Git history for how the work evolved.
+Keep feature rationale beside its design while work is underway.
+At completion, update maintained project docs with delivered behavior and enduring rationale, using inline comments where appropriate.
+Completed feature documents and Git history explain how the work evolved; maintained docs describe the current system.
 Neither a decision log nor a previous approval can override current evidence or user instructions.
 Project priorities calibrate review severity; an alpha project should not accumulate compatibility layers merely to coordinate deployment.
 Record real operational coordination concerns in PR descriptions instead.
+
+Follow project status conventions, or use `draft`, `active`, and `complete` for the feature lifecycle.
+Review readiness does not imply implementation or feature completion.
+Close a feature only when its acceptance criteria are verified, including the combined outcome across chunks, and relevant maintained docs are updated.
+Keep unverified scope incomplete; only the user can authorize deferring a required outcome.
+Later enhancements normally begin a new bounded feature based on maintained docs and current code.
 
 ## Automated adversarial review
 
@@ -72,12 +82,14 @@ A ready design is not an implemented feature, and a ready local implementation i
 
 ## Execution and publishing
 
-An implementation request authorizes the selected plan chunk and its automatic local code-review loop.
+An implementation request authorizes the selected feature scope and its automatic local code-review loops.
+Honor whether the user requested one chunk, the next ready chunk, or the whole feature.
+For a whole-feature request, continue through ready chunks and verify the overall outcome before closure.
 Review the actual local diff, including relevant staged, unstaged, and untracked changes; an existing PR is not required.
 Preserve unrelated work, and use a worktree only when isolation helps.
-No special completion marker or duplicate chunk document is required when the plan already supplies sufficient detail.
+No special completion marker or duplicate chunk document is required when the feature or supporting plan already supplies sufficient detail.
 
 A review or implementation request alone does not authorize Git commits, pushes, PR publishing, merges, or deployments.
 Honor explicit existing authority without repeatedly asking for it.
 An authorized PR includes the outcome, review and verification evidence, limitations, and any operational coordination notes.
-Completion updates describe what actually happened rather than sealing a plan permanently against future evidence.
+Completion updates describe the delivered feature and carry current knowledge into maintained docs.

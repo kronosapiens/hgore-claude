@@ -10,7 +10,7 @@ Read [development-workflow](../development-workflow/SKILL.md) and follow its `de
 Load its referenced instructions relative to that skill's directory, not this alias.
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
-Work from the existing spec and plan.
+Work from the feature's design and implementation plan, whether inline or in supporting documents.
 Resolve ordinary technical choices through the automated loop; escalate only material scope or unresolved product decisions.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.

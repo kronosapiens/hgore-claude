@@ -118,32 +118,56 @@ class ConfigurationTests(ProjectTestCase):
 
 
 class ScaffoldTests(ProjectTestCase):
-    def test_nested_paths_with_spaces_produce_a_valid_relative_spec_link(self):
-        spec, plan = workflow.scaffold(
-            self.root, Path("design notes/feature spec.md"), Path("plans/build plan.md")
+    def test_cli_creates_only_the_feature_by_default(self):
+        status, stdout, stderr = self.invoke(
+            "init", self.root, "--feature", "docs/features/csv-export.md"
         )
-        self.assertTrue(spec.is_file())
-        self.assertTrue(plan.is_file())
-        self.assertIn("../design%20notes/feature%20spec.md", plan.read_text())
-        self.assertEqual(workflow.lint(spec), [])
+        feature = self.root / "docs/features/csv-export.md"
+        self.assertEqual(status, 0, stderr)
+        self.assertEqual(stdout.strip(), str(feature))
+        self.assertEqual(list(self.root.rglob("*.md")), [feature])
+        self.assertEqual(workflow.lint(feature), [])
+
+    def test_optional_plan_links_both_ways_across_paths_with_spaces(self):
+        status, stdout, stderr = self.invoke(
+            "init", self.root,
+            "--feature", "feature notes/csv export.md",
+            "--plan", "plans/build plan.md",
+        )
+        feature = self.root / "feature notes/csv export.md"
+        plan = self.root / "plans/build plan.md"
+        self.assertEqual(status, 0, stderr)
+        self.assertEqual(stdout.splitlines(), [str(feature), str(plan)])
+        self.assertIn("../feature%20notes/csv%20export.md", plan.read_text())
+        self.assertIn("../plans/build%20plan.md", feature.read_text())
+        self.assertEqual(workflow.lint(feature), [])
         self.assertEqual(workflow.lint(plan), [])
+
+    def test_standalone_feature_is_not_overwritten(self):
+        feature = self.write("feature.md", "Existing user work.\n")
+        status, stdout, _ = self.invoke(
+            "init", self.root, "--feature", "feature.md"
+        )
+        self.assertEqual(status, 2)
+        self.assertEqual(stdout, "")
+        self.assertEqual(feature.read_text(), "Existing user work.\n")
 
     def test_absolute_paths_inside_root_are_supported(self):
         destinations = workflow.scaffold(
-            self.root, self.root / "spec.md", self.root / "plan.md"
+            self.root, self.root / "feature.md", self.root / "plan.md"
         )
-        self.assertEqual(destinations, [self.root / "spec.md", self.root / "plan.md"])
+        self.assertEqual(destinations, [self.root / "feature.md", self.root / "plan.md"])
 
     def test_existing_second_destination_prevents_all_writes(self):
         plan = self.write("plan.md", "Existing user work.\n")
         with self.assertRaises(ValueError):
-            workflow.scaffold(self.root, Path("new/spec.md"), Path("plan.md"))
+            workflow.scaffold(self.root, Path("new/feature.md"), Path("plan.md"))
         self.assertEqual(plan.read_text(), "Existing user work.\n")
         self.assertFalse((self.root / "new").exists())
 
     def test_identical_normalized_paths_are_rejected(self):
         with self.assertRaises(ValueError):
-            workflow.scaffold(self.root, Path("spec.md"), Path("folder/../spec.md"))
+            workflow.scaffold(self.root, Path("feature.md"), Path("folder/../feature.md"))
         self.assertEqual(list(self.root.iterdir()), [])
 
     def test_traversal_absolute_and_symlink_escapes_are_rejected(self):
@@ -151,38 +175,51 @@ class ScaffoldTests(ProjectTestCase):
         outside.mkdir()
         (self.root / "shortcut").symlink_to(outside, target_is_directory=True)
         for escaped in (
-            Path("../outside/spec.md"),
-            outside / "spec.md",
-            Path("shortcut/spec.md"),
+            Path("../outside/feature.md"),
+            outside / "feature.md",
+            Path("shortcut/feature.md"),
         ):
-            with self.subTest(path=escaped), self.assertRaises(ValueError):
-                workflow.scaffold(self.root, escaped, Path("plan.md"))
+            for plan in (None, Path("plan.md")):
+                with self.subTest(path=escaped, plan=plan), self.assertRaises(ValueError):
+                    workflow.scaffold(self.root, escaped, plan)
+            with self.subTest(plan=escaped), self.assertRaises(ValueError):
+                workflow.scaffold(self.root, Path("feature.md"), escaped)
         self.assertEqual(list(outside.iterdir()), [])
+        self.assertFalse((self.root / "feature.md").exists())
         self.assertFalse((self.root / "plan.md").exists())
 
-    def test_invalid_extension_is_rejected_before_creating_spec(self):
-        with self.assertRaises(ValueError):
-            workflow.scaffold(self.root, Path("spec.md"), Path("plan.txt"))
+    def test_invalid_extension_is_rejected_before_writing(self):
+        for feature, plan in (
+            (Path("feature.txt"), None),
+            (Path("feature.md"), Path("plan.txt")),
+        ):
+            with self.subTest(feature=feature, plan=plan), self.assertRaises(ValueError):
+                workflow.scaffold(self.root, feature, plan)
         self.assertEqual(list(self.root.iterdir()), [])
 
-    def test_existing_file_parent_is_rejected_before_creating_spec(self):
+    def test_existing_file_parent_is_rejected_before_creating_feature(self):
         blocker = self.write("blocked", "User data.")
         with self.assertRaises(ValueError):
-            workflow.scaffold(self.root, Path("spec.md"), Path("blocked/plan.md"))
+            workflow.scaffold(self.root, Path("feature.md"), Path("blocked/plan.md"))
         self.assertEqual(blocker.read_text(), "User data.")
-        self.assertFalse((self.root / "spec.md").exists())
+        self.assertFalse((self.root / "feature.md").exists())
 
     def test_destination_ancestor_collision_is_rejected_before_writing(self):
-        status, _, _ = self.invoke(
-            "init", self.root, "--spec", "spec.md", "--plan", "spec.md/plan.md"
-        )
-        self.assertEqual(status, 2)
+        for feature, plan in (
+            ("feature.md", "feature.md/plan.md"),
+            ("plan.md/feature.md", "plan.md"),
+        ):
+            with self.subTest(feature=feature, plan=plan):
+                status, _, _ = self.invoke(
+                    "init", self.root, "--feature", feature, "--plan", plan
+                )
+                self.assertEqual(status, 2)
         self.assertEqual(list(self.root.iterdir()), [])
 
     def test_nonexistent_root_is_not_created(self):
         missing = self.root / "missing"
         status, _, _ = self.invoke(
-            "init", missing, "--spec", "spec.md", "--plan", "plan.md"
+            "init", missing, "--feature", "feature.md"
         )
         self.assertEqual(status, 2)
         self.assertFalse(missing.exists())

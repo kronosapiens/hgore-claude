@@ -1,6 +1,6 @@
 ---
 name: plan-author
-description: Author optional chunk details in an existing implementation plan using development-workflow.
+description: Author optional chunk details in a feature or implementation plan using development-workflow.
 ---
 
 # plan-author
