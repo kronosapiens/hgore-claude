@@ -7,8 +7,9 @@ import argparse
 import json
 import re
 import sys
+from os.path import relpath
 from pathlib import Path
-from urllib.parse import unquote, urlsplit
+from urllib.parse import quote, unquote, urlsplit
 
 
 BUNDLE = Path(__file__).resolve().parents[1]
@@ -35,14 +36,15 @@ def configuration(root: Path) -> dict:
     return config
 
 
-def scaffold(root: Path, spec: Path, plan: Path) -> list[Path]:
+def scaffold(root: Path, feature: Path, plan: Path | None = None) -> list[Path]:
     root = root.resolve(strict=True)
     if not root.is_dir():
         raise ValueError(f"not a directory: {root}")
-    destinations = [(root / name).resolve() for name in (spec, plan)]
-    if destinations[0] == destinations[1]:
-        raise ValueError("spec and plan must be different files")
-    if any(left in right.parents for left, right in (destinations, destinations[::-1])):
+    names = (feature,) if plan is None else (feature, plan)
+    destinations = [(root / name).resolve() for name in names]
+    if len(set(destinations)) != len(destinations):
+        raise ValueError("feature and plan must be different files")
+    if any(left in right.parents for left in destinations for right in destinations):
         raise ValueError("neither destination may be a parent of the other")
     for path in destinations:
         if not path.is_relative_to(root) or path.suffix.lower() != ".md":
@@ -52,16 +54,18 @@ def scaffold(root: Path, spec: Path, plan: Path) -> list[Path]:
         for parent in path.parents:
             if parent.exists() and not parent.is_dir():
                 raise ValueError(f"parent is not a directory: {parent}")
-    spec_path, plan_path = destinations
-    # relpath handles specs and plans in separate directories without an absolute link.
-    from os.path import relpath
-    from urllib.parse import quote
-
+    feature_path = destinations[0]
     values = {
-        "title": spec_path.stem.replace("-", " ").capitalize(),
-        "spec_link": quote(relpath(spec_path, plan_path.parent).replace("\\", "/"), safe="/"),
+        "title": feature_path.stem.replace("-", " ").capitalize(),
+        "implementation": "Use a short checklist of reviewable chunks, their dependencies, and acceptance evidence.\n"
+        "Track progress here as the work is implemented and verified.",
     }
-    for template, destination in zip(("spec.md", "plan.md"), destinations):
+    if plan is not None:
+        plan_path = destinations[1]
+        values["feature_link"] = quote(relpath(feature_path, plan_path.parent).replace("\\", "/"), safe="/")
+        plan_link = quote(relpath(plan_path, feature_path.parent).replace("\\", "/"), safe="/")
+        values["implementation"] = f"See the [implementation plan]({plan_link}) for chunks, dependencies, and progress."
+    for template, destination in zip(("feature.md", "plan.md"), destinations):
         content = (BUNDLE / "templates" / template).read_text().format(**values)
         destination.parent.mkdir(parents=True, exist_ok=True)
         # Exclusive creation also protects files created after the preflight.
@@ -218,10 +222,10 @@ def main(argv: list[str] | None = None) -> int:
     commands = parser.add_subparsers(dest="command", required=True)
     config_parser = commands.add_parser("config", help="resolve and validate model/budget settings")
     config_parser.add_argument("--root", type=Path, default=Path.cwd())
-    init_parser = commands.add_parser("init", help="create a spec and plan without overwriting")
+    init_parser = commands.add_parser("init", help="create a feature and optional plan without overwriting")
     init_parser.add_argument("root", type=Path)
-    init_parser.add_argument("--spec", type=Path, required=True)
-    init_parser.add_argument("--plan", type=Path, required=True)
+    init_parser.add_argument("--feature", type=Path, required=True)
+    init_parser.add_argument("--plan", type=Path)
     lint_parser = commands.add_parser("lint", help="check local links and explicit dependency tables")
     lint_parser.add_argument("paths", type=Path, nargs="+")
     args = parser.parse_args(argv)
@@ -231,7 +235,7 @@ def main(argv: list[str] | None = None) -> int:
                 raise ValueError(f"not a directory: {args.root}")
             print(json.dumps(configuration(args.root.resolve()), indent=2))
         elif args.command == "init":
-            for path in scaffold(args.root, args.spec, args.plan):
+            for path in scaffold(args.root, args.feature, args.plan):
                 print(path)
         else:
             findings = [finding for path in args.paths for finding in lint(path)]

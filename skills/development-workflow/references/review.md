@@ -8,7 +8,8 @@ An explicit user request for findings only overrides automatic revision.
 ## Establish the review
 
 1. Identify the requested outcome, artifact paths, relevant repositories, and verification commands.
-   Read the spec and implementation plan when present; neither a brief nor a chunk document is required.
+   Read the selected feature, relevant maintained docs, and any supporting design or implementation plan.
+   Design and planning may be inline in the feature; separate files are unnecessary.
 2. For code, resolve the diff against the requested base or the PR's actual base, including relevant staged, unstaged, and untracked task files.
    Snapshot Git status and existing changes so the agent can distinguish its edits from unrelated work.
    If there is no PR, review the local diff normally; creating a PR is not a prerequisite.
@@ -16,7 +17,7 @@ An explicit user request for findings only overrides automatic revision.
 3. Run applicable deterministic lint or repository checks.
    Record pre-existing failures separately and use evidence when deciding whether a change caused them.
 4. Choose two perspectives from the work's actual concerns, or three if needed.
-   Each reviewer reads the relevant project instructions, specs, and code directly.
+   Each reviewer reads the relevant project instructions, feature, maintained docs, and code directly.
    Optional project persona files supplement the bundled perspectives; their absence never blocks review.
 5. Create one temporary run directory in a permitted project scratch location and a small state file inside it.
    For example, use `mktemp -d "<project-root>/.development-workflow-run.XXXXXX"` and exclude that exact directory from staging.
@@ -47,7 +48,7 @@ Do not return to the user between ordinary rounds.
    A reviewer disagreement is something the orchestrator should investigate, not an automatic request for human arbitration.
 4. Apply accepted local fixes, addressing the cause and affected callers within scope.
    Update rationale in the owning doc or code comment when needed.
-   Revise coupled specs or plan sections when authorized so the artifacts remain consistent.
+   Revise coupled feature, design, or plan sections when authorized so the artifacts remain consistent.
    Do not weaken the requested outcome, rewrite governing user constraints, or grow the task to resolve a finding.
 5. Verify the edits and run the relevant checks.
    A failed check or a fix that creates a new defect remains pending for the next round.

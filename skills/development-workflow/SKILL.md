@@ -1,6 +1,6 @@
 ---
 name: development-workflow
-description: Author or revise development specs and implementation plans, run bounded adversarial review with automatic revisions, and implement reviewed plan chunks. Use for the requested development workflow or automated design/plan/code review with revisions, not ordinary findings-only review, routine edits, or discussion alone.
+description: Define, plan, implement, and close bounded features with automated adversarial review and revisions. Use for the requested development workflow or automated feature/design/plan/code review with revisions, not ordinary findings-only review, routine edits, or discussion alone.
 ---
 
 # Development workflow
@@ -27,6 +27,9 @@ Read [model routing](references/models.md) before starting a review.
 Request: `$ARGUMENTS`.
 Treat the request as natural language, not a CLI grammar.
 Infer the operation, scope, and relevant artifacts from the request, conversation, and project context.
+A feature is a bounded delivery effort with an observable outcome and a completion point.
+Use one feature document by default, keeping its design and implementation plan inline.
+Add supporting documents when complexity warrants them or the user requests them.
 Do not require operation names, flags, or file paths when the intent is clear.
 Use existing document locations or the project's naming conventions for new artifacts.
 Ask only for missing information that materially changes the work, such as an unspecified feature outcome or an ambiguous chunk selection.
@@ -37,8 +40,9 @@ Examples:
 
 ```text
 /development-workflow Begin designing a feature that lets users export their data.
-/development-workflow Review the current migration spec and fix substantive issues.
-/development-workflow Implement the next ready chunk, but don't commit or publish anything.
+/development-workflow Review the CSV export feature and fix substantive issues.
+/development-workflow Implement the next ready chunk of CSV export, but don't commit or publish anything.
+/development-workflow Close the CSV export feature and update the project docs.
 ```
 
 ## Route internally
@@ -49,20 +53,21 @@ Quote paths containing spaces when using that shorthand or invoking shell helper
 
 | Operation | Inputs | Instructions |
 |---|---|---|
-| `design` | `<spec-path>` and optional `--plan <plan-path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `plan` | `<plan-path> --spec <spec-path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `chunk` | `<plan-path> --chunk <chunk-id>`; optional `--output <path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
+| `design` | `<feature-path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
+| `plan` | `<feature-path>`; optional `--output <plan-path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
+| `chunk` | `<feature-or-plan-path> --chunk <chunk-id>`; optional `--output <path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
 | `review` | One or more artifact paths, or `code` with `--base <ref>` or `--pr <number>` | [Review loop](references/review.md) |
-| `execute` | `<plan-path> --chunk <chunk-id>`; optional `--spec <spec-path>` | [Execution](references/execute.md), including code review |
-| `init` | `<project-root> --spec <path> --plan <path>` | [Setup](references/setup.md) |
+| `execute` | `<feature-or-plan-path>`; optional `--chunk <chunk-id>` | [Execution](references/execute.md), including code review |
+| `init` | `<project-root> --feature <path>`; optional `--plan <path>` | [Setup](references/setup.md) |
 | `lint` | One or more Markdown paths | [Lint](references/lint.md) |
-| `close` | `<plan-path>` | [Completion](references/finish.md) |
+| `close` | `<feature-or-plan-path>` | [Completion](references/finish.md) |
 | `ship` | Current branch and an explicitly authorized destination | [Publishing](references/ship.md) |
 | `cleanup` | An explicitly identified worktree | [Cleanup](references/cleanup.md) |
 | `explain` | Recent review findings | [Remaining questions](references/questions.md) |
 | `resolve` | Recent findings and the user's resolutions | [Remaining questions](references/questions.md) |
 
-For a spec and plan, review them together so scope, dependencies, and acceptance criteria agree.
+Review a feature together with its supporting design and plan when relevant so scope, dependencies, and acceptance criteria agree.
+Existing specs and plans remain usable without migration; resolve their roles through [project context](references/context.md).
 Optional briefs, visions, and detailed chunk documents use the same authoring and review protocols; they are not prerequisites.
 Older commands are aliases with a dependency on this skill, not additional stages.
 

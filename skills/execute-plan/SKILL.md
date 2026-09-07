@@ -1,6 +1,6 @@
 ---
 name: execute-plan
-description: Implement a reviewed plan chunk and run automated code review using development-workflow.
+description: Implement reviewed feature work and run automated code review using development-workflow.
 ---
 
 # execute-plan
@@ -10,7 +10,8 @@ Read [development-workflow](../development-workflow/SKILL.md) and follow its `ex
 Load its referenced instructions relative to that skill's directory, not this alias.
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
-Accept a chunk in the plan itself or a separate chunk document.
+Accept implementation chunks in the feature, a supporting plan, or a separate chunk document.
+Preserve whether the request covers one chunk or the whole feature.
 Do not require a PR before reviewing the implementation.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.

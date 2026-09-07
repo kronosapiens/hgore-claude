@@ -2,7 +2,7 @@
 
 Confirm the user's existing authorization covers the intended commit, push, and PR actions.
 A request to open a PR authorizes the necessary branch, commit, push, and PR creation for that change.
-A successful review or a request to close a plan does not provide that authorization by itself.
+A successful review or a request to close a feature does not provide that authorization by itself.
 Do not re-ask for authority already given.
 
 Inspect Git status, the task diff, repository remotes, and any existing PR.

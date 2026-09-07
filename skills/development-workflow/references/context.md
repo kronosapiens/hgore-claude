@@ -3,20 +3,38 @@
 Resolve the project root and inspect Git status before editing.
 Read applicable AGENTS.md and CLAUDE.md instructions, then the docs relevant to the task and the code they discuss.
 For several repositories, record each root and give every reviewer the relevant paths in each repository.
-Keep one migration spec and plan with explicit repository ownership rather than duplicating the shared contract.
+Keep one feature entry point with explicit repository ownership and links to any shared design or plan.
 
-Accept an explicit Markdown spec path wherever it lives, including `spec/v5.md`.
-Resolve a plan's Markdown `Spec` link relative to the plan file; resolve command-line paths relative to the invocation directory.
-An explicit `--spec` selects the design under consideration; disclose a disagreement with an existing plan link and reconcile that link as part of the authorized plan edit.
-Without an explicit path, use a plan's spec link or the uniquely identified spec relevant to the request.
-Do not universally choose the highest version: some projects have overlapping specs and others designate one active version.
-Follow the project's actual document roles and status conventions.
+## Select the feature
 
-The default artifacts are a design spec and an implementation plan.
-The spec carries intended behavior, boundaries, guidelines, and the rationale that still matters.
-The plan carries build order, reviewable chunks, dependencies, and observable acceptance criteria.
-Use existing docs when they already do these jobs.
-Create an optional brief or chunk document only when it removes real ambiguity.
+Identify the bounded change from the user's request, conversation, explicit path, or a supporting plan's `Feature` link.
+Resolve Markdown links relative to their document and command-line paths relative to the invocation directory.
+If an explicit selection disagrees with a document's link, disclose the mismatch and reconcile it within authorized edits; ask if ownership or scope remains ambiguous.
+When several features could match and the conversation does not select one, ask rather than choosing by filename, version number, or recency.
+Use the project's existing document layout; otherwise a descriptive path such as `docs/features/csv-export.md` is sufficient.
+Do not require a feature registry, directory tree, or sequential spec versions.
+
+Use one feature document by default for the outcome, scope, acceptance criteria, design, implementation chunks, and verification evidence.
+Separate design or plan files are useful when detail would obscure that entry point.
+Link them from the feature, and link a separate plan back to its feature.
+Keep each piece of information in its owning document instead of duplicating it across files.
+
+Existing specs and plans can supply the same information without a new wrapper or migration.
+For a legacy plan, follow its `Spec` link and identify the requested bounded change within those documents.
+A broad or versioned spec is project context, not an instruction to implement every outstanding change or create the next version.
+Preserve explicit requests to review or edit an existing spec as scoped document work.
+
+## Feature lifecycle and maintained docs
+
+Follow project status conventions; otherwise use `draft`, `active`, and `complete`.
+Draft covers definition and planning; active begins with implementation; complete requires verified feature acceptance and updated maintained docs.
+Review readiness is separate from implementation status.
+Keep unfinished or unverified work visible, and do not mark a feature complete merely because its chunks are checked off.
+Later enhancements normally begin a new bounded feature that builds on current behavior.
+
+Maintained project docs describe the system as it exists and hold current architectural rationale.
+Feature documents describe the requested change and, after closure, its outcome and historical context.
+Completed features and old specs do not override current code, maintained docs, or user instructions.
 
 Verify factual claims against current files and symbols.
 Distinguish an existing code reference from a proposed new interface.
@@ -27,7 +45,7 @@ Each fact in an artifact must be readable on its own; a citation can follow its 
 
 Do not create or consult decision logs as authority.
 An existing decision log can point to historical context, but its entries do not constrain current judgment or suppress findings.
-Current rationale belongs beside the mechanism in the owning spec or code comment.
+During feature work, keep rationale beside the design it explains; at closure, carry enduring rationale into maintained docs or useful code comments.
 Consult relevant Git history or PR discussion when a historical question affects the task; do not ingest the whole history by default.
 Do not migrate or delete a project's pre-existing logs as an unrelated cleanup.
 
