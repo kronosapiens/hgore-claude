@@ -17,14 +17,20 @@ An isolated worktree is optional when it helps concurrent work or protects overl
 Do not automatically copy credentials, provision services, start unrelated containers, or create a branch from an assumed `origin/main`.
 
 Implement the smallest coherent change that meets the chunk's acceptance criteria.
+When an implementer agent builds the chunk, the orchestrator writes it a brief: the outcome, the behaviors the chunk delivers, the files and the seams that must survive, the project rules that bite, the verification to run, and what to report back.
+A brief names behaviors, never an enumerated list of tests; one test per observable behavior follows from the list, and a scenario the edge-case standard puts below its floor earns neither.
+The same implementer carries the revision rounds and the deletion round, resumed with each round's accepted findings rather than re-spawned.
 Use existing abstractions and update affected callers within scope.
+Use an existing library before writing an adapter, client, parser, or protocol implementation by hand.
 Mark the feature active when implementation begins, following the project's status conventions.
 Plans guide the work and may be refined as facts become clear; keep them consistent with the feature's acceptance criteria and requested outcome.
 Do not turn an ordinary implementation adjustment into a request to amend a frozen contract.
 
 Verify in proportion to the change and run the repository's required checks.
+Run long checks leg by leg rather than as one call, in the implementer's brief as in the orchestrator's own hands, so a stalled call never loses a run.
 Use test-first development when a failing behavioral test usefully specifies the work.
 Do not add tests merely to mirror implementation details or satisfy a blanket TDD rule.
+Write one test per observable behavior, not per sentence of the design; an edge case earns a test only when it earned code under the [edge-case standard](edge-cases.md).
 Record baseline failures, unavailable services, and any unverified acceptance criteria honestly.
 A required check that remains unverified prevents a complete result.
 

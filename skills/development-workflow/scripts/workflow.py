@@ -26,13 +26,13 @@ def configuration(root: Path) -> dict:
         if unknown:
             raise ValueError(f"{local}: unknown fields: {', '.join(sorted(unknown))}")
         config.update(override)
-    for key in ("orchestrator_model", "reviewer_model"):
+    for key in ("orchestrator_model", "reviewer_model", "implementer_model"):
         if not isinstance(config[key], str) or not config[key].strip():
             raise ValueError(f"{key} must be a nonempty model name")
     if type(config["max_rounds"]) is not int or not 1 <= config["max_rounds"] <= 10:
         raise ValueError("max_rounds must be an integer from 1 to 10")
-    if type(config["reviewer_count"]) is not int or config["reviewer_count"] not in (2, 3):
-        raise ValueError("reviewer_count must be 2 or 3")
+    if type(config["reviewer_count"]) is not int or config["reviewer_count"] not in (1, 2, 3):
+        raise ValueError("reviewer_count must be 1, 2, or 3")
     return config
 
 

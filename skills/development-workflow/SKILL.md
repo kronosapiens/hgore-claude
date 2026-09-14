@@ -19,7 +19,7 @@ When reading this file through an alias, substitute the resolved primary skill d
 Read [config.json](config.json), then any `.development-workflow.json` at the project root.
 The project file overrides only the fields it supplies; explicit user choices take precedence.
 Run `python3 "${CLAUDE_SKILL_DIR}/scripts/workflow.py" config --root <project-root>` to validate and resolve configuration.
-The defaults recommend a Fable session, explicitly request Opus on each reviewer invocation, allow three revision rounds, and use two reviewers per round.
+The defaults recommend a Fable session, explicitly request Opus on each reviewer and implementer invocation, allow two revision rounds followed by one deletion round, and use two reviewers per round, or one for a small change.
 Read [model routing](references/models.md) before starting a review.
 
 ## Interpret the user's intent
@@ -81,6 +81,7 @@ Older commands are aliases with a dependency on this skill, not additional stage
 - A review verdict does not authorize commits, pushes, PR creation, PR edits, review comments, deployments, or messages.
   Honor authorization already given for those actions without asking again.
 - Preserve unrelated work and do not expand a change to clean up unrelated findings.
+- Edge cases earn code by the [edge-case standard](references/edge-cases.md); a scenario below its likelihood floor is not a bug, and an optional finding is never applied in the round it was found.
 - Keep each Markdown sentence on its own line and use the project's vocabulary.
 
 ## Handoff

@@ -69,7 +69,7 @@ The default process is:
 
 1. Read project instructions, the selected feature, maintained docs, and actual code to calibrate scope and priorities.
 2. Define or revise the feature's design and implementation plan, inline by default.
-3. Run up to three review/revision rounds, with two fresh independent reviewers per round, then one fresh final audit.
+3. Run up to two review/revision rounds with two fresh independent reviewers per round, then one deletion round that trims what the work added beyond the requested outcome, then one fresh final audit.
 4. Hand the mature result to the user, or continue only if the existing request already authorizes the next action.
 
 Reviewers report evidence; the orchestrator adjudicates, applies accepted local corrections, and verifies them.
@@ -85,12 +85,14 @@ An optional `.development-workflow.json` at the project root overrides individua
 {
   "orchestrator_model": "fable",
   "reviewer_model": "opus",
-  "max_rounds": 3,
+  "implementer_model": "opus",
+  "max_rounds": 2,
   "reviewer_count": 2
 }
 ```
 
-Use two reviewers, or three for a distinct additional perspective.
+Use one reviewer for a small change, two normally, or three for a distinct additional perspective; the deletion round and the final audit run whatever the count.
+The implementer model is what the orchestrator requests for the agent that builds from its brief.
 The session-model setting records intent; it does not switch the running host model.
 An Astra orchestrator is an alternative only in a host with an explicitly configured way to invoke the chosen reviewers; this pack does not provide cross-provider orchestration.
 Requested and observed models are reported separately.

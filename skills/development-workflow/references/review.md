@@ -16,7 +16,7 @@ An explicit user request for findings only overrides automatic revision.
    A dirty tree is not itself a blocker when the task's changes can be separated.
 3. Run applicable deterministic lint or repository checks.
    Record pre-existing failures separately and use evidence when deciding whether a change caused them.
-4. Choose two perspectives from the work's actual concerns, or three if needed.
+4. Choose one perspective for a small change, two normally, or three when a distinct additional perspective earns it; the deletion round and the final audit run whatever the count.
    Each reviewer reads the relevant project instructions, feature, maintained docs, and code directly.
    Optional project persona files supplement the bundled perspectives; their absence never blocks review.
 5. Create one temporary run directory in a permitted project scratch location and a small state file inside it.
@@ -33,7 +33,7 @@ If its artifact basis changed externally, reconcile the actual changes before co
 
 ## Revision rounds
 
-Run up to `max_rounds` rounds, three by default.
+Run up to `max_rounds` rounds, two by default.
 Do not return to the user between ordinary rounds.
 
 1. Increment and persist the round counter before launching reviewers.
@@ -45,8 +45,10 @@ Do not return to the user between ordinary rounds.
    Deduplicate overlapping findings without discarding distinct failure modes.
    For each, record `accept`, `reject`, or `unresolved`, with concise evidence.
    Rejection needs a factual reason; an earlier approval or decision is not a reason.
+   The [edge-case standard](edge-cases.md) is a factual reason: a scenario below its likelihood floor, or at tier 3, is rejected as not a bug and recorded as a design cost line or a follow-up item.
    A reviewer disagreement is something the orchestrator should investigate, not an automatic request for human arbitration.
-4. Apply accepted local fixes, addressing the cause and affected callers within scope.
+4. Apply accepted material fixes, addressing the cause and affected callers within scope — through the same implementer agent when one built the work, resumed rather than re-spawned.
+   An optional finding is never applied in the round it was found; carry it to the handoff's follow-up list for the user.
    Update rationale in the owning doc or code comment when needed.
    Revise coupled feature, design, or plan sections when authorized so the artifacts remain consistent.
    Do not weaken the requested outcome, rewrite governing user constraints, or grow the task to resolve a finding.
@@ -60,14 +62,23 @@ Do not return to the user between ordinary rounds.
 Reviewers may find a defect in unchanged text; they need not explain why an earlier reviewer missed it.
 Prior acceptance provides no immunity, and findings on new edits receive no automatic severity discount.
 A supported rejected finding can be closed; lack of evidence leaves a material concern unresolved.
-Optional style preferences do not drive additional rounds.
+Optional findings do not drive additional rounds and are not applied within the run.
+
+## Deletion round
+
+After the revision phase ends — early or at budget — run one deletion round before the audit.
+It does not depend on findings: its subject is what the implementation and the rounds added beyond the requested outcome.
+Launch one fresh reviewer with the [reviewer prompt](reviewer.md) marked `deletion round` and the removal perspective from [perspectives.md](perspectives.md).
+It reports removals, not defects: tests that restate the predicate or duplicate another test's proof, tests for behavior the design already recovers from, guards with no named person and rate under the [edge-case standard](edge-cases.md), abstractions with one caller, comments narrating history, fields nothing reads, hand-rolled adapters where a library exists.
+Dispose of each removal as findings are disposed of: accept only with a factual reason, apply accepted removals, and re-run the affected checks.
+Skip the round, and say so in the handoff, when the diff carries no tests or guards beyond what was asked for.
 
 ## Fresh final audit
 
-After the revision phase, launch one fresh reviewer over the complete final artifact and its affected context.
+After the deletion round, launch one fresh reviewer over the complete final artifact and its affected context.
 Supply the intended outcome, relevant project docs, code/diff, and actual verification results.
 Do not supply prior verdicts, disposition history, or the orchestrator's defense.
-The audit uses the configured reviewer model and sits outside the revision-round budget: at most three revision rounds plus one audit by default.
+The audit uses the configured reviewer model and sits outside the revision-round budget: at most two revision rounds, one deletion round, and one audit by default.
 
 The final auditor reports independently and does not edit.
 The orchestrator may verify or reject an audit finding with evidence, but makes no further edits within this run.

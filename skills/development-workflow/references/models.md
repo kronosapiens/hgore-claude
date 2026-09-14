@@ -15,8 +15,9 @@ Resolve a material unavailable-model mismatch before spending the review budget.
 For every reviewer, pass the resolved `reviewer_model` explicitly in the Agent call's `model` parameter.
 Use a fresh general-purpose agent, with read-only instructions from [reviewer.md](reviewer.md).
 Do not rely on Explore/Plan defaults or inherit the expensive session model accidentally.
-Two independent reviewers are the default; use three when the task merits a distinct additional perspective.
-The final audit is one new reviewer using the same configured reviewer model.
+Two independent reviewers are the default; one serves a small change, and three when the task merits a distinct additional perspective.
+The implementer that builds from the orchestrator's brief is a fresh general-purpose agent on `implementer_model`, passed explicitly in the Agent call, and is resumed across the revision rounds and the deletion round rather than re-spawned, so it keeps the context of what it built.
+The deletion round and the final audit are each one new reviewer using the same configured reviewer model.
 Reviewer agents must not spawn other agents; the orchestrator owns the budget.
 
 Check host-reported model information when available, including substitution warnings and Claude Code's `/tasks` display.

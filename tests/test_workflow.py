@@ -48,7 +48,8 @@ class ConfigurationTests(ProjectTestCase):
             {
                 "orchestrator_model": "fable",
                 "reviewer_model": "opus",
-                "max_rounds": 3,
+                "implementer_model": "opus",
+                "max_rounds": 2,
                 "reviewer_count": 2,
             },
         )
@@ -63,11 +64,11 @@ class ConfigurationTests(ProjectTestCase):
         self.assertEqual(config["max_rounds"], 1)
         self.assertEqual(config["reviewer_model"], "opus")
         self.assertEqual(config["reviewer_count"], 2)
-        self.assertEqual(workflow.configuration(self.directory)["max_rounds"], 3)
+        self.assertEqual(workflow.configuration(self.directory)["max_rounds"], 2)
 
     def test_supported_numeric_boundaries(self):
         for rounds in (1, 10):
-            for reviewers in (2, 3):
+            for reviewers in (1, 3):
                 with self.subTest(rounds=rounds, reviewers=reviewers):
                     self.write(
                         ".development-workflow.json",
@@ -85,7 +86,7 @@ class ConfigurationTests(ProjectTestCase):
             {"orchestrator_model": " "},
             {"reviewer_model": 7},
             *({"max_rounds": value} for value in (0, 11, True, 2.5, "3")),
-            *({"reviewer_count": value} for value in (1, 4, True, 2.0, "2")),
+            *({"reviewer_count": value} for value in (0, 4, True, 2.0, "2")),
         ]
         for override in overrides:
             with self.subTest(override=override):

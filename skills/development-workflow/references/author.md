@@ -12,7 +12,9 @@ State the intended outcome, current versus proposed behavior, meaningful exclusi
 Describe ownership, interfaces, and the mechanism at the level the work needs.
 Keep present-tense rationale with the design it explains.
 Choose ordinary technical details from evidence and project guidance.
+Prefer an existing library over a hand-rolled adapter, client, parser, or protocol implementation; a design that hand-rolls one names the library it considered and why it does not serve.
 Explore significant alternatives when that improves the design, then let the automated review challenge the choice.
+Name the cases that earn code and the costs the design declines by the [edge-case standard](edge-cases.md); do not enumerate every conceivable case, since each named case tends to become a code path, a test, and a finding.
 Only a genuine unresolved product choice or material scope change needs human input.
 
 When explicitly requested, an optional brief focuses on purpose and scope, and an optional vision focuses on product direction.

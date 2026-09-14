@@ -37,6 +37,7 @@ Later enhancements normally begin a new bounded feature based on maintained docs
 ## Automated adversarial review
 
 The orchestrator owns the artifact, edits, and verification.
+An implementer agent may carry the edits from the orchestrator's brief and is resumed across rounds; a brief names the outcome and the behaviors, never an enumerated test list, and the orchestrator still adjudicates every finding and verifies every change.
 Fresh reviewers independently try to falsify it against the requested outcome, project guidance, and repository evidence.
 They do not edit, inherit the author's defense, see each other's initial findings, or launch additional agents.
 Bundled perspectives work without mandatory project persona files.
@@ -44,16 +45,18 @@ Bundled perspectives work without mandatory project persona files.
 Each run has a bounded revision phase and a separate final audit:
 
 1. Establish scope, authorization, artifact version, verification commands, and the round budget.
-2. Launch two fresh reviewers in parallel, optionally three for a distinct additional perspective.
+2. Launch one fresh reviewer for a small change or two in parallel, optionally three for a distinct additional perspective; the deletion round and the final audit run whatever the count.
 3. Investigate each finding and accept, reject, or leave it unresolved with evidence.
 4. Apply accepted corrections locally and verify the affected behavior.
-5. Repeat while material concerns or edits need independent review, up to three rounds by default.
-6. Have one new reviewer audit the complete final artifact without previous verdicts or the orchestrator's defense.
+5. Repeat while material concerns or edits need independent review, up to two rounds by default.
+6. Run one deletion round: a fresh reviewer reports what the implementation and the rounds added beyond the requested outcome — restating tests, guards below the edge-case standard, one-caller abstractions, hand-rolled adapters — and the orchestrator removes what it accepts with evidence.
+7. Have one new reviewer audit the complete final artifact without previous verdicts or the orchestrator's defense.
 
 The final audit is outside the revision budget and does not permit another edit cycle.
 An accepted or unresolved material audit finding produces an incomplete handoff, not an unbounded retry.
 Optional stylistic preferences do not prolong the loop.
 Rejected findings need factual rebuttals; agreement, prior acceptance, and absence of evidence are not rebuttals.
+The [edge-case standard](skills/development-workflow/references/edge-cases.md) is a rebuttal: a scenario that arises in fewer than one in a thousand ordinary acts is not a bug, a recoverable consequence is not a finding, and an optional finding is carried to the handoff rather than applied in the round.
 
 Ordinary disagreements stay inside the automated loop.
 The orchestrator does not ask the user to choose between initial reviewer opinions.
