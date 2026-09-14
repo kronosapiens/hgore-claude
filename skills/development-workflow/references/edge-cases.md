@@ -1,34 +1,48 @@
-# Edge cases
+# Correctness and defensive work
 
-An edge case earns code by its consequence and its likelihood, never by the fact that someone thought of it.
-Score every candidate — in a design, a brief, a review finding, or a test — before it becomes any of those.
+Verify explicit user requirements and ordinary supported behavior in proportion to their consequence.
+Filtering, sorting, rendering, and other feature behavior deserve verification even when a defect would neither lose data nor cross a boundary.
+The screening below governs additional defensive machinery, not whether the requested feature works.
+An agent cannot turn a speculative scenario into a requirement merely by adding it to a plan or acceptance list.
 
-## Likelihood
+## Frequency
 
-Estimate how often the scenario arises per ordinary act of the person using the feature: a click, a submission, a connection, a message read.
-For background work, count per item processed on their behalf: a record synced, a message judged, a job run.
-A scenario that arises in fewer than one in a thousand such acts is not a bug.
-It earns no code, no test, and no review finding; at most a sentence in the design naming the cost, when a reader would otherwise assume it is handled.
-A stack of independent coincidences — a rare recovery path, during which the user also did something unusual, followed by a third unrelated event — is below the floor by construction.
-Two things are not measured at the user's rate: a security class, whose rate is the attacker's, and a failure that persists, which once it happens happens on every run after, so its rate is measured from then on.
+Before adding defensive machinery, classify the trigger against a relevant operation: a submission, a sync item, or a job run.
 
-## Consequence
+| Category | Evidence | Treatment |
+|---|---|---|
+| Expected | The trigger is part of normal supported use, such as ordinary input variation, routine concurrency, or known service behavior | Assess consequence and existing recovery |
+| Evidenced | An incident, reproduction, or relevant documentation establishes an unusual failure | Assess consequence and likely recurrence in this project |
+| Speculative | The scenario is merely possible, particularly when it needs several independent unusual events | Default to no additional machinery |
 
-Above the floor, the consequence decides.
+A plausible story or named user is not evidence of frequency.
+Explain why the trigger is ordinary or what demonstrates that it occurs; documentation of a possibility alone does not establish likely recurrence.
+Multiple independent unusual events lining up are presumptively speculative; events caused by the same failure are not independent coincidences.
+Use observed rates when available, but do not invent probabilities or conduct a statistical study merely to justify a guard.
+When evidence is weak, prefer the simpler implementation and state a consequential limitation only when a reader would otherwise assume it is handled.
+If a vendor behavior can be checked directly, inspect it before adding code for it.
 
-- **Tier 1 — code.** A security class (injection, a credential used across users or tenants), or a process that sticks with no run or act that ever clears it.
-- **Tier 2 — code when a named person reaches it in ordinary use.** A record lost or wrongly written, or data crossing a user, tenant, or system boundary.
-  A named person is a user doing a thing the product invites: a colleague continuing a thread, a user with a second address, a user scheduling an action.
-  Without one, the outcome is a sentence in the design naming the cost, and nothing else.
-- **Tier 3 — nothing.** Anything the design already recovers from: the next run, the next click, the user's retry.
-  A 500 on a hand-typed URL, a stale count until the next run, a wrong label until the next sync.
-  No code, no test, and no design sentence unless a reader would otherwise assume it is handled.
+Two exceptions apply to speculative frequency: security is evaluated against an attacker's behavior, and a persistent failure is evaluated by its repeated consequences after the initial trigger.
+Name the concrete exposed mechanism or condition that remains stuck; the words security or persistence alone do not establish an exception.
 
-A change that strictly narrows existing code — a tighter predicate, a branch removed — may be taken at any tier, since it removes rather than adds.
+## Consequence and findings
 
-## Corollaries
+Expected or evidenced does not automatically mean additional handling is warranted.
+If existing recovery meets the feature's correctness, timeliness, and durability requirements, leave additional machinery out.
+A retry is not sufficient when it cannot restore the required result or undo an improper disclosure.
+Follow the project's actual requirements under [project context](context.md); do not invent stricter reliability promises.
 
-- **Reality before guards.** A vendor or environment behavior that a pilot or a manual check can observe — an address form, an encoding tolerance, what a scheduled action looks like — is checked before any code guards it.
-- **One test per behavior, not per sentence.** Only tier 1 and tier 2 code earns a test, and the test proves the consequence, not the predicate.
-- **In review, `material` means tier 1, or tier 2 with the person and the rate named.** Everything else is `optional`, and an optional finding is never applied in the round it was found; it goes to the handoff's follow-up list for the user.
-- **In a design, name the cases that earn code and the costs declined.** Do not enumerate every conceivable case; each named case tends to become a code path, a test, and a finding.
+A finding is `material` when it demonstrates a failure of required behavior, a consequential defect or security exception supported by this standard, or substantial unnecessary machinery with a concrete cost.
+Use `optional` for improvements that do not establish such a failure or cost.
+Unsupported speculative hardening is not a finding.
+The [review procedure](review.md) owns how findings are handled and when work stops.
+
+## Verification and removal
+
+Choose tests from observable behavior and meaningful regression risks rather than individual design sentences or implementation predicates.
+Use as many distinct cases as the behavior needs; avoid duplicate proofs and arbitrary test counts.
+Additional defensive handling earns a test when it earns code under this standard.
+
+Assess simplification by its effect on behavior, not the number of lines removed.
+Removing or tightening a predicate can change accepted inputs, selected records, permissions, or disclosures; trace those effects using [data-flow review](data-flow.md).
+A behavior-preserving removal needs evidence that required behavior still holds, without inventing a new edge case to justify the cleanup.

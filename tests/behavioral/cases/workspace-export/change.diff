@@ -1,0 +1,6 @@
+--- a/export.py
++++ b/export.py
+@@ -1,2 +1,2 @@
+ def export_rows(rows, workspace):
+-    return [row['name'] for row in rows if row['workspace'] == workspace and row['active']]
++    return [row['name'] for row in rows if row['active']]

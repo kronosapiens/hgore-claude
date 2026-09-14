@@ -1,0 +1,9 @@
+--- a/api.py
++++ b/api.py
+@@ -4,4 +4,4 @@
+ def save_tags(person_id, tags):
+-    if not isinstance(tags, str):
+-        raise ValueError('tags must be text')
++    if not isinstance(tags, list) or not all(isinstance(tag, str) for tag in tags):
++        raise ValueError('tags must be a list of strings')
+     upsert({'id': person_id, 'tags': tags})

@@ -1,0 +1,29 @@
+{
+  "project_root": ".",
+  "artifact_paths": [
+    "app.py",
+    "FEATURE.md"
+  ],
+  "phase": "revision",
+  "status": "interrupted",
+  "rounds_started": 1,
+  "max_rounds": 2,
+  "reviewer_count": 2,
+  "authorization": "Local implementation and review only; no commits, publication, or deployment.",
+  "reviewers": [
+    {
+      "id": "one",
+      "status": "complete",
+      "report": "reviewer-one.md"
+    },
+    {
+      "id": "two",
+      "status": "pending",
+      "reason": "reviewer unavailable"
+    }
+  ],
+  "findings": [],
+  "verification": [],
+  "deletion_round": "not started",
+  "final_audit": "not started"
+}

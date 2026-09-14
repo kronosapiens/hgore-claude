@@ -1,0 +1,6 @@
+--- a/reader.py
++++ b/reader.py
+@@ -1,2 +1,2 @@
+ def read_amount(message):
+-    return message['total']
++    return message['amount']

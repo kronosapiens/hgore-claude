@@ -5,6 +5,17 @@ Use the validated configuration and [model routing](models.md).
 Review the requested artifacts or code, with local corrections enabled by default.
 An explicit user request for findings only overrides automatic revision.
 
+This file owns the review schedule, finding dispositions, stopping conditions, and checkpoint lifecycle.
+Other workflow instructions refer here rather than defining separate versions of those rules.
+
+## Review schedule
+
+Use the resolved `max_rounds` and `reviewer_count` from configuration for the revision phase.
+One reviewer serves a small change; otherwise use the configured count, selecting distinct perspectives when several reviewers run.
+The revision phase may end early when no material findings or edits remain.
+It is followed by the deletion round when applicable and one fresh final audit, as defined below.
+Changing the reviewer count does not remove those stages.
+
 ## Establish the review
 
 1. Identify the requested outcome, artifact paths, relevant repositories, and verification commands.
@@ -16,27 +27,27 @@ An explicit user request for findings only overrides automatic revision.
    A dirty tree is not itself a blocker when the task's changes can be separated.
 3. Run applicable deterministic lint or repository checks.
    Record pre-existing failures separately and use evidence when deciding whether a change caused them.
-4. Choose one perspective for a small change, two normally, or three when a distinct additional perspective earns it; the deletion round and the final audit run whatever the count.
+4. Select perspectives for the reviewers under the schedule above.
    Each reviewer reads the relevant project instructions, feature, maintained docs, and code directly.
    Optional project persona files supplement the bundled perspectives; their absence never blocks review.
 5. Create one temporary run directory in a permitted project scratch location and a small state file inside it.
    For example, use `mktemp -d "<project-root>/.development-workflow-run.XXXXXX"` and exclude that exact directory from staging.
    Do not assume a global temporary directory is within the host's deletion permissions.
    Record canonical repository roots, artifact paths and hashes or diff basis, authorization scope, configured models, round limit, and current round.
-   Keep pending findings and their dispositions there to survive context compaction.
+   Keep the current phase, completed and pending reviewer work, findings and dispositions, and verification results there to survive interruption or compaction.
    Store no credentials, source payloads, or copied project documentation in this state.
 
 Temporary state is progress tracking for this run.
 It does not create binding decisions, suppress new findings, or replace current project documents.
-Resume the same run with its remaining budget; context compaction or a new finding does not reset the counter.
-If its artifact basis changed externally, reconcile the actual changes before continuing and invalidate affected earlier checks.
+Resume and clean up state under the checkpoint lifecycle below.
 
 ## Revision rounds
 
-Run up to `max_rounds` rounds, two by default.
+Run within the configured revision budget.
 Do not return to the user between ordinary rounds.
 
-1. Increment and persist the round counter before launching reviewers.
+1. Increment and persist the round counter before launching a new revision round.
+   Resuming an interrupted round does not increment it again.
 2. Launch the selected reviewers in parallel as fresh agents on the same artifact version.
    Give them the [reviewer prompt](reviewer.md), perspective, scope, relevant paths, and verification evidence.
    Give neither the author's defense nor other reviewers' findings.
@@ -45,7 +56,7 @@ Do not return to the user between ordinary rounds.
    Deduplicate overlapping findings without discarding distinct failure modes.
    For each, record `accept`, `reject`, or `unresolved`, with concise evidence.
    Rejection needs a factual reason; an earlier approval or decision is not a reason.
-   The [edge-case standard](edge-cases.md) is a factual reason: a scenario below its likelihood floor, or at tier 3, is rejected as not a bug and recorded as a design cost line or a follow-up item.
+   Apply the [finding criteria](edge-cases.md#consequence-and-findings); reject speculative hardening with the concrete reason it is unsupported, while still verifying required behavior.
    A reviewer disagreement is something the orchestrator should investigate, not an automatic request for human arbitration.
 4. Apply accepted material fixes, addressing the cause and affected callers within scope — through the same implementer agent when one built the work, resumed rather than re-spawned.
    An optional finding is never applied in the round it was found; carry it to the handoff's follow-up list for the user.
@@ -66,19 +77,19 @@ Optional findings do not drive additional rounds and are not applied within the 
 
 ## Deletion round
 
-After the revision phase ends — early or at budget — run one deletion round before the audit.
-It does not depend on findings: its subject is what the implementation and the rounds added beyond the requested outcome.
+After the revision phase ends, consider the complete artifact for meaningful removal candidates under the [removal perspective](perspectives.md#removal).
+When candidates exist, run one deletion round before the audit, regardless of the revision count or whether earlier reviewers found defects.
+Skip it only when there are no meaningful candidates across all removal categories, and report the reason.
 Launch one fresh reviewer with the [reviewer prompt](reviewer.md) marked `deletion round` and the removal perspective from [perspectives.md](perspectives.md).
-It reports removals, not defects: tests that restate the predicate or duplicate another test's proof, tests for behavior the design already recovers from, guards with no named person and rate under the [edge-case standard](edge-cases.md), abstractions with one caller, comments narrating history, fields nothing reads, hand-rolled adapters where a library exists.
+It reports removals rather than defects, with evidence that the proposed removal preserves required behavior.
 Dispose of each removal as findings are disposed of: accept only with a factual reason, apply accepted removals, and re-run the affected checks.
-Skip the round, and say so in the handoff, when the diff carries no tests or guards beyond what was asked for.
 
 ## Fresh final audit
 
 After the deletion round, launch one fresh reviewer over the complete final artifact and its affected context.
 Supply the intended outcome, relevant project docs, code/diff, and actual verification results.
 Do not supply prior verdicts, disposition history, or the orchestrator's defense.
-The audit uses the configured reviewer model and sits outside the revision-round budget: at most two revision rounds, one deletion round, and one audit by default.
+The audit uses the configured reviewer model and sits outside the revision budget.
 
 The final auditor reports independently and does not edit.
 The orchestrator may verify or reject an audit finding with evidence, but makes no further edits within this run.
@@ -95,8 +106,27 @@ A material missing decision or external permission ends the dependent work; fini
 Report the artifact or diff, consequential revisions, important rejected findings and their evidence, remaining questions, verification, round count, and configured/requested/observed models.
 Include measured time and usage when the host exposes them; label unavailable cost or token figures as unavailable.
 Human approval concerns this mature result, not every intermediate suggestion.
-On handoff, remove only the exact run-state file, then use `rmdir` on the exact empty run directory; never recursively delete the directory.
-The session transcript carries the review report.
-Keep it only if the user requests a paused run to be resumed, and identify its exact path.
+Include the retained checkpoint path for unfinished work under the lifecycle below.
 Do not automatically commit, push, update a PR, post a verdict, merge, or advance from reviewed design into implementation.
 If the user's existing request already authorizes the next action, continue under that authorization.
+
+## Checkpoint lifecycle
+
+Keep a small uncommitted checkpoint for every unfinished run, including `needs input`, `review incomplete`, unavailable reviewers, and interrupted checks.
+Retention does not require the user to request a pause.
+Record what remains, why it stopped, its artifact basis, existing authorization, phase, completed work, and budget already used.
+An incomplete handoff does not itself complete or abandon the run.
+
+On continuation, read the checkpoint, reconcile the current artifacts, and resume pending work with the remaining budget.
+Compaction, interruption, a new finding, or a missing checkpoint never grants a fresh budget; reconstruct known progress from the transcript when necessary.
+If artifacts changed externally, invalidate affected evidence without silently resetting the run.
+Do not re-run completed stages merely because the conversation restarted.
+
+If a run hands off with unresolved work after consuming its revision budget, or its final audit leaves material findings, preserve the checkpoint and report the incomplete result.
+Using the last revision round does not prevent completion of that round or the scheduled deletion round and final audit.
+The user's explicit request to resolve those findings and continue authorizes a new bounded run; carry forward unresolved findings and current authorization without treating prior verdicts as authority.
+Resuming an interrupted run with work still pending does not use that exception.
+
+Delete the checkpoint only when its run is complete or the user explicitly abandons it, unless the user requested retention.
+Remove only the exact state file, then use `rmdir` on the exact empty run directory; never recursively delete the directory or remove project artifacts with it.
+The handoff report carries completed review evidence; the checkpoint is temporary progress tracking, not a permanent decision log.

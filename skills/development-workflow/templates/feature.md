@@ -31,5 +31,5 @@ Keep unavailable checks and unverified criteria explicit.
 
 ## Completion
 
-At closure, summarize the delivered outcome and update relevant maintained docs with current behavior and enduring rationale.
+At closure, summarize the delivered outcome and update relevant project docs according to their purpose, distinguishing current behavior from future intent.
 Link those docs where useful and preserve any explicitly deferred scope.

@@ -51,7 +51,7 @@ Use descriptive names such as `docs/features/csv-export.md`; new work does not a
 
 Follow project status conventions, or use `draft`, `active`, and `complete`.
 Completion requires verified feature acceptance and updated maintained project docs, including behavior across implementation chunks.
-Completed features provide historical context; maintained docs describe current behavior and enduring architectural rationale.
+Interpret project docs by their purpose and status, preserving the distinction between delivered behavior and future intent.
 A later enhancement, such as scheduled exports, starts a new feature using the current system as its baseline.
 
 Explicit operations and paths remain optional shorthand:
@@ -69,7 +69,7 @@ The default process is:
 
 1. Read project instructions, the selected feature, maintained docs, and actual code to calibrate scope and priorities.
 2. Define or revise the feature's design and implementation plan, inline by default.
-3. Run up to two review/revision rounds with two fresh independent reviewers per round, then one deletion round that trims what the work added beyond the requested outcome, then one fresh final audit.
+3. Follow the [bounded review procedure](skills/development-workflow/references/review.md), with revision, removal where applicable, and an independent final audit.
 4. Hand the mature result to the user, or continue only if the existing request already authorizes the next action.
 
 Reviewers report evidence; the orchestrator adjudicates, applies accepted local corrections, and verifies them.
@@ -91,7 +91,7 @@ An optional `.development-workflow.json` at the project root overrides individua
 }
 ```
 
-Use one reviewer for a small change, two normally, or three for a distinct additional perspective; the deletion round and the final audit run whatever the count.
+The [review procedure](skills/development-workflow/references/review.md#review-schedule) explains how these settings determine the schedule.
 The implementer model is what the orchestrator requests for the agent that builds from its brief.
 The session-model setting records intent; it does not switch the running host model.
 An Astra orchestrator is an alternative only in a host with an explicitly configured way to invoke the chosen reviewers; this pack does not provide cross-provider orchestration.
@@ -99,12 +99,12 @@ Requested and observed models are reported separately.
 
 Maintained project docs and relevant inline comments hold durable rationale; completed features and Git history hold historical context.
 There is no decision log, permanent approval ledger, or rule that a previously accepted choice cannot be questioned.
-Temporary review state exists only to resume the current bounded run.
+An unfinished run retains a small checkpoint so interruption or handoff does not lose its findings, verification, or remaining budget.
 
 Local corrections are automatic within the requested workflow scope.
 Commits, pushes, PR creation or updates, comments, merges, and deployments require user authorization; a clean verdict grants none.
 A request to open a PR includes the necessary commit and push, without authorizing a merge or deployment.
-Deployment coordination belongs in PR notes and must not drive implementation complexity for an alpha product.
+Deployment coordination belongs in PR notes; compatibility mechanisms follow the project's actual requirements.
 
 ## Existing commands and upgrades
 
@@ -139,7 +139,7 @@ python3 skills/development-workflow/scripts/workflow.py lint README.md SDLC.md
 
 The helper validates configuration, safely scaffolds a feature and optional linked plan, and checks common local Markdown links and explicitly declared dependency tables.
 It does not judge prose quality, enforce a document schema, or replace project tests and independent review.
-See [SDLC.md](SDLC.md) for the full review contract and [tests/README.md](tests/README.md) for installation and behavioral checks.
+See [SDLC.md](SDLC.md) for the instruction map and [tests/README.md](tests/README.md) for installation and behavioral checks, including synthetic review and resumption fixtures.
 
 This change adapts the pack only.
 The Premise/Theo repository split is a separate implementation exercise, driven from its own Claude Code session.

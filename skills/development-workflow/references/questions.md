@@ -1,7 +1,7 @@
 # Remaining questions
 
-Use the recent review report or the user's supplied findings.
-If neither is available, ask for the artifact or report that needs attention rather than inventing blockers.
+Use the recent review report, retained checkpoint, or the user's supplied findings.
+If none is available, ask for the artifact or report that needs attention rather than inventing blockers.
 
 For `explain`, summarize the material unresolved questions, their evidence, and a recommended choice.
 Group questions when one answer resolves several of them.
@@ -11,7 +11,5 @@ For `resolve`, investigate each material question using current project code, do
 Apply the user's selected resolution or an ordinary technical correction already within the requested scope.
 Keep rationale beside the feature design or in maintained docs or code comments, according to its purpose.
 If the user is asking only for recommendations, present them without editing.
-After authorized edits, run a new bounded review when the user has requested continued implementation or review.
-Do not reset an unfinished run's counter just to evade its limit.
-If a previous run already handed off at its limit, the user's request to resolve and continue authorizes a new run.
+For continued implementation or review, resume or start a new run according to the [checkpoint lifecycle](review.md#checkpoint-lifecycle).
 No decision log is created.

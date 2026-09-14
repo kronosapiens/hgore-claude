@@ -22,6 +22,6 @@ Do not publish code that has unresolved material review findings or required che
 
 Lead the PR description with the concrete change and resulting behavior.
 Include verification and any operational coordination notes that matter.
-Do not add implementation complexity to accommodate deployment sequencing.
+Describe operational coordination and any required compatibility behavior using the project's [deployment requirements](context.md#proportional-implementation).
 Do not merge unless the user asks.
 Return the PR URL and material verification limits.

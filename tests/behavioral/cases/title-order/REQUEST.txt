@@ -1,0 +1,7 @@
+Use instructions/reviewer.md and the relevant review perspectives to review this change, findings only.
+Read FEATURE.md, change.diff, applicable project guidance, and the current code.
+The files are the complete resulting project; the diff shows the proposed change.
+Inspect required behavior and report material findings with concrete evidence, paths traced, and verification gaps.
+No test execution results are supplied.
+Use read-only file tools, do not edit, run commands, contact external services, or spawn agents.
+You are the independent reviewer, not the workflow orchestrator.

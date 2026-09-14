@@ -32,9 +32,11 @@ Review readiness is separate from implementation status.
 Keep unfinished or unverified work visible, and do not mark a feature complete merely because its chunks are checked off.
 Later enhancements normally begin a new bounded feature that builds on current behavior.
 
-Maintained project docs describe the system as it exists and hold current architectural rationale.
-Feature documents describe the requested change and, after closure, its outcome and historical context.
-Completed features and old specs do not override current code, maintained docs, or user instructions.
+Determine each document's purpose and status from project guidance and its contents: current behavior, intended direction, an active change, or historical context.
+Do not infer authority from a filename, directory, or the word maintained.
+Preserve forward-looking design documents and distinguish delivered behavior from remaining intent when updating them.
+Use code and verification to establish what runs today, and the user's request and applicable design guidance to establish what should change.
+Completed features normally supply historical context; a project may keep an older document active explicitly.
 
 Verify factual claims against current files and symbols.
 Distinguish an existing code reference from a proposed new interface.
@@ -57,7 +59,7 @@ Several sequential chunks may change the same file.
 File ownership matters for concurrent edits, not as a permanent exclusion between chunks.
 Judge concerns by behavior, not word choice, document length, or file count.
 
-Describe deployment coordination concerns in a PR's operational notes when relevant.
-Do not derive implementation choices, compatibility layers, feature flags, or additional stages from deployment sequencing.
-Actual requirements such as a single consumer owning a listener remain behavioral requirements.
-Do not invent whole-feature deployment assumptions either.
+Read the project's maturity, compatibility promises, deployment model, and recovery requirements before choosing mechanisms.
+Keep simple implementation as the default where no stronger requirement applies.
+Record ordinary deployment coordination in PR notes; add compatibility behavior when a concrete project requirement, such as overlapping application versions or supported external clients, needs it.
+Name that requirement and the affected consumer rather than assuming either atomic deployment or mandatory compatibility layers.

@@ -1,0 +1,4 @@
+Use instructions/review.md and instructions/questions.md to continue the review described by checkpoint.json.
+The pending independent reviewer is unavailable in this environment; no new reviewer results or verification results are supplied.
+Read the project and existing checkpoint, update checkpoint.json if needed, and write HANDOFF.md with the result and remaining work.
+You may write only those two files, use only file tools, and cannot launch agents, execute checks, or contact external services.

@@ -39,10 +39,20 @@ Request review and local corrections, explicitly withholding permission to commi
 Run under Fable with Opus reviewers and a small explicit spend limit when supported by the host.
 
 Check that reviewers independently inspect project context, the orchestrator adjudicates and corrects findings without intermediate human approval, corrected work receives independent review, and a fresh final audit runs.
-Confirm the round limit, authorization boundaries, temporary-state cleanup, and requested versus observed model reporting.
+Confirm the round limit, authorization boundaries, checkpoint retention for unfinished work, cleanup after completion, and requested versus observed model reporting.
 For closure, supply a feature whose chunks are marked done but whose combined acceptance check is unverified; it should remain incomplete until verified.
-After verified completion, check that maintained docs describe delivered behavior and enduring rationale, and that later enhancements start a new feature.
+After verified completion, check that doc updates preserve their intended role while recording the delivered outcome, and that later enhancements start a new feature.
 Repeat feature selection with a legacy plan's `Spec` link into a broad versioned spec; the request should select only its bounded change without forcing migration or advancing the spec version.
 Inspect the resulting files yourself; a model's success report is not sufficient evidence.
 Report authentication or model-availability failures as untested behavior rather than a passing smoke test.
 When scripting Claude Code, retain the `project` settings source so installed project skills are discoverable; disabling all settings sources also hides those skills.
+
+Use the [synthetic behavioral fixtures](behavioral/README.md) to exercise review, simplification, project policy, and interrupted-run behavior without private project data.
+Prepare one isolated case at a time and keep its evaluation criteria out of the reviewing agent's context.
+Model checks are explicit, bounded development evaluations, not merge requirements; the offline suite validates the fixtures' concrete behavior, not the quality of a model's review.
+
+For an optional historical data-flow review, use an authorized disposable pre-fix snapshot of a past shape or selection change, with its original brief and tests.
+Supply the reviewer instructions and raw repository, withholding the post-mortem, known defect, and expected correction.
+Inspect whether the reviewer independently discovers consumers missing from the brief and traces an accepted value to a concrete consequence.
+Include a guard-removal example to check that fewer lines are not treated as evidence of preserved behavior.
+Record the actual paths inspected and findings; this exercise supplies behavioral evidence, not exhaustive proof or a required merge check.

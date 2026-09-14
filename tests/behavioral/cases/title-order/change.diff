@@ -1,0 +1,6 @@
+--- a/titles.py
++++ b/titles.py
+@@ -1,2 +1,2 @@
+ def ordered_titles(titles):
+-    return list(titles)
++    return sorted(titles, key=str.casefold, reverse=True)

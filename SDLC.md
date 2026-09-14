@@ -1,98 +1,58 @@
 # Workflow contract
 
-The [README](README.md) covers installation and commands.
-The executable instructions live in [development-workflow](skills/development-workflow/SKILL.md).
-Describe intent in natural language after `/development-workflow`; operation names and flags are optional shorthand.
-The orchestrator infers the selected feature, requested stage, and artifacts from the conversation and project context, asking only when missing information materially changes the work.
-This routing preserves the user's scope and authorization limits.
+The [README](README.md) covers installation and use.
+The executable entry point is [development-workflow](skills/development-workflow/SKILL.md).
+Describe the intended outcome naturally; choosing an operation does not expand scope or authorization.
 
-## Artifacts and judgment
+## Ownership of instructions
 
-Organize work around a feature: a bounded delivery effort with an observable outcome and completion point.
-Start with one feature document containing scope, acceptance criteria, design, implementation chunks, and verification evidence.
-Read existing project guidance and code before drafting it.
-Use a descriptive feature name and select relevant documents by purpose and scope.
-New features do not require sequential spec versions, and existing specs and plans can supply context or describe the selected effort without migration.
+Each detailed policy has one owning reference.
+This document summarizes their roles; follow the linked procedure for execution details.
 
-Separate designs, implementation plans, briefs, visions, and chunk documents are optional aids for larger work.
-Link supporting documents from the feature and a separate plan back to the feature, keeping each detail in one owning document.
-Small changes do not need the whole document hierarchy.
-Chunk boundaries follow behavior, dependencies, and reviewability, not fixed file counts, banned words, or a universal one-chunk/one-PR rule.
-Sequential chunks may touch the same files.
-Parallel work requires genuinely independent changes or explicit coordination.
+| Subject | Owner |
+|---|---|
+| Scope, document meaning, and project conventions | [Project context](skills/development-workflow/references/context.md) |
+| Feature design, foundations, and implementation order | [Authoring](skills/development-workflow/references/author.md) |
+| Required correctness and additional defensive work | [Defensive-work standard](skills/development-workflow/references/edge-cases.md) |
+| Producer and consumer discovery | [Data flow](skills/development-workflow/references/data-flow.md) |
+| Review schedule, dispositions, stopping, and checkpoints | [Review procedure](skills/development-workflow/references/review.md) |
+| Model invocation and observed-model reporting | [Model routing](skills/development-workflow/references/models.md) |
+| Implementation and verification | [Execution](skills/development-workflow/references/execute.md) |
+| Feature acceptance and document updates | [Completion](skills/development-workflow/references/finish.md) |
+| Authorized Git and PR actions | [Publishing](skills/development-workflow/references/ship.md) |
 
-Keep feature rationale beside its design while work is underway.
-At completion, update maintained project docs with delivered behavior and enduring rationale, using inline comments where appropriate.
-Completed feature documents and Git history explain how the work evolved; maintained docs describe the current system.
-Neither a decision log nor a previous approval can override current evidence or user instructions.
-Project priorities calibrate review severity; an alpha project should not accumulate compatibility layers merely to coordinate deployment.
-Record real operational coordination concerns in PR descriptions instead.
+## Features and project context
 
-Follow project status conventions, or use `draft`, `active`, and `complete` for the feature lifecycle.
-Review readiness does not imply implementation or feature completion.
-Close a feature only when its acceptance criteria are verified, including the combined outcome across chunks, and relevant maintained docs are updated.
-Keep unverified scope incomplete; only the user can authorize deferring a required outcome.
-Later enhancements normally begin a new bounded feature based on maintained docs and current code.
+Organize work around a bounded outcome and observable acceptance criteria.
+Use the project's document conventions, with one feature document as the default when no convention exists.
+Separate plans and chunk documents are optional aids; they do not create extra approval stages.
+Distinguish current behavior, intended direction, active work, and historical context when reading or updating documents.
+Project requirements determine compatibility and recovery obligations, with simple implementation as the default when no stronger requirement applies.
 
-## Automated adversarial review
+Establish required foundations before their dependent feature behavior, justified by concrete consumers.
+For changes to stored shapes, parsing, or selection, discover producers and consumers beyond the brief and diff.
+Verify the combined feature outcome across chunks before marking it complete.
+Keep rationale with its design and carry enduring knowledge into the appropriate project documents without erasing future intent.
 
-The orchestrator owns the artifact, edits, and verification.
-An implementer agent may carry the edits from the orchestrator's brief and is resumed across rounds; a brief names the outcome and the behaviors, never an enumerated test list, and the orchestrator still adjudicates every finding and verifies every change.
-Fresh reviewers independently try to falsify it against the requested outcome, project guidance, and repository evidence.
-They do not edit, inherit the author's defense, see each other's initial findings, or launch additional agents.
-Bundled perspectives work without mandatory project persona files.
+## Review and judgment
 
-Each run has a bounded revision phase and a separate final audit:
+The orchestrator owns the artifact, finding dispositions, edits, and verification.
+Independent reviewers inspect raw evidence and try to falsify the proposed result without inheriting the author's defense.
+The bounded review procedure includes revision, an applicable removal pass, and a fresh final audit.
+Ordinary disagreements are investigated within that procedure; missing product decisions or authority are surfaced to the user.
 
-1. Establish scope, authorization, artifact version, verification commands, and the round budget.
-2. Launch one fresh reviewer for a small change or two in parallel, optionally three for a distinct additional perspective; the deletion round and the final audit run whatever the count.
-3. Investigate each finding and accept, reject, or leave it unresolved with evidence.
-4. Apply accepted corrections locally and verify the affected behavior.
-5. Repeat while material concerns or edits need independent review, up to two rounds by default.
-6. Run one deletion round: a fresh reviewer reports what the implementation and the rounds added beyond the requested outcome — restating tests, guards below the edge-case standard, one-caller abstractions, hand-rolled adapters — and the orchestrator removes what it accepts with evidence.
-7. Have one new reviewer audit the complete final artifact without previous verdicts or the orchestrator's defense.
+Required behavior receives appropriate verification.
+Additional defensive machinery is screened as expected, evidenced, or speculative, then assessed by consequence and existing recovery.
+A plausible failure story alone does not justify more code.
+Review findings are evidence for judgment, not permission to publish or permanent constraints on future work.
 
-The final audit is outside the revision budget and does not permit another edit cycle.
-An accepted or unresolved material audit finding produces an incomplete handoff, not an unbounded retry.
-Optional stylistic preferences do not prolong the loop.
-Rejected findings need factual rebuttals; agreement, prior acceptance, and absence of evidence are not rebuttals.
-The [edge-case standard](skills/development-workflow/references/edge-cases.md) is a rebuttal: a scenario that arises in fewer than one in a thousand ordinary acts is not a bug, a recoverable consequence is not a finding, and an optional finding is carried to the handoff rather than applied in the round.
+## Handoff and continuity
 
-Ordinary disagreements stay inside the automated loop.
-The orchestrator does not ask the user to choose between initial reviewer opinions.
-It stops dependent work only when a material product choice, scope expansion, or new authority is genuinely necessary.
-An explicit findings-only request disables local revisions.
+Report what changed, what was verified, and what remains incomplete.
+Review readiness, feature completion, and publishing authorization are distinct.
+Preserve an uncommitted checkpoint for unfinished work and resume it under the review procedure's remaining budget.
+Completed or explicitly abandoned runs release their temporary state; project artifacts remain according to their own lifecycle.
 
-Temporary run state preserves the round count, artifact basis, pending findings, and authorization through compaction.
-It is not committed or treated as durable authority and is removed at handoff unless the user requests a paused run.
-Compaction and newly discovered findings do not reset the budget.
-
-## Verification and handoff
-
-Structural lint checks common local links and explicit dependency graphs, not prose heuristics.
-Repository-required checks still apply, with pre-existing failures distinguished from regressions.
-Verification must cover the behavior affected by corrections, not merely the edited lines.
-
-The possible handoffs are:
-
-- `ready for user review`: the final audit ran, required checks passed, and every material finding is resolved or rejected with evidence.
-- `needs input`: a material product, scope, or authorization decision remains.
-- `review incomplete`: material findings remain, required checks could not finish, or independent reviewers were unavailable.
-
-Report consequential changes, important rejected findings, remaining questions, verification, rounds used, and requested versus observed models.
-Include measured time and usage when available, without inventing cost or model observations.
-A ready design is not an implemented feature, and a ready local implementation is not a shipped PR.
-
-## Execution and publishing
-
-An implementation request authorizes the selected feature scope and its automatic local code-review loops.
-Honor whether the user requested one chunk, the next ready chunk, or the whole feature.
-For a whole-feature request, continue through ready chunks and verify the overall outcome before closure.
-Review the actual local diff, including relevant staged, unstaged, and untracked changes; an existing PR is not required.
-Preserve unrelated work, and use a worktree only when isolation helps.
-No special completion marker or duplicate chunk document is required when the feature or supporting plan already supplies sufficient detail.
-
-A review or implementation request alone does not authorize Git commits, pushes, PR publishing, merges, or deployments.
-Honor explicit existing authority without repeatedly asking for it.
-An authorized PR includes the outcome, review and verification evidence, limitations, and any operational coordination notes.
-Completion updates describe the delivered feature and carry current knowledge into maintained docs.
+Local corrections stay within the user's authorized scope.
+Commits, pushes, PR updates, comments, merges, and deployments require the appropriate user authorization, including authority already given.
+A passing review grants none, and this pack does not require repositories to make automated review verdicts merge-blocking.

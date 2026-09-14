@@ -19,7 +19,7 @@ When reading this file through an alias, substitute the resolved primary skill d
 Read [config.json](config.json), then any `.development-workflow.json` at the project root.
 The project file overrides only the fields it supplies; explicit user choices take precedence.
 Run `python3 "${CLAUDE_SKILL_DIR}/scripts/workflow.py" config --root <project-root>` to validate and resolve configuration.
-The defaults recommend a Fable session, explicitly request Opus on each reviewer and implementer invocation, allow two revision rounds followed by one deletion round, and use two reviewers per round, or one for a small change.
+Configuration supplies model roles and revision limits; the [review procedure](references/review.md) owns the schedule and stopping conditions.
 Read [model routing](references/models.md) before starting a review.
 
 ## Interpret the user's intent
@@ -67,6 +67,7 @@ Quote paths containing spaces when using that shorthand or invoking shell helper
 | `resolve` | Recent findings and the user's resolutions | [Remaining questions](references/questions.md) |
 
 Review a feature together with its supporting design and plan when relevant so scope, dependencies, and acceptance criteria agree.
+Changes to stored shapes, parsing, or data-selection guards also use [data-flow review](references/data-flow.md), from authoring through implementation and review.
 Existing specs and plans remain usable without migration; resolve their roles through [project context](references/context.md).
 Optional briefs, visions, and detailed chunk documents use the same authoring and review protocols; they are not prerequisites.
 Older commands are aliases with a dependency on this skill, not additional stages.
@@ -81,11 +82,11 @@ Older commands are aliases with a dependency on this skill, not additional stage
 - A review verdict does not authorize commits, pushes, PR creation, PR edits, review comments, deployments, or messages.
   Honor authorization already given for those actions without asking again.
 - Preserve unrelated work and do not expand a change to clean up unrelated findings.
-- Edge cases earn code by the [edge-case standard](references/edge-cases.md); a scenario below its likelihood floor is not a bug, and an optional finding is never applied in the round it was found.
+- Verify required behavior and screen additional defensive work using [expected, evidenced, or speculative triggers](references/edge-cases.md).
 - Keep each Markdown sentence on its own line and use the project's vocabulary.
 
 ## Handoff
 
-Report the artifact or diff, material changes, verification results, unresolved choices, rounds used, and requested versus observed models.
+Follow the [review handoff and checkpoint lifecycle](references/review.md#result-and-human-handoff), reporting the artifact, verification, and unfinished work.
 Distinguish a completed review from a completed implementation.
 Present review state as temporary bookkeeping, never as a decision log or source of authority.
