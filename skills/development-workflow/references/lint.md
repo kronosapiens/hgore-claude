@@ -3,10 +3,11 @@
 Run the bundled Python script on the Markdown artifacts being authored or reviewed:
 
 ~~~sh
-python3 "${CLAUDE_SKILL_DIR}/scripts/workflow.py" lint <feature-path>
+python3 "<skill-directory>/scripts/workflow.py" lint <feature-path>
 ~~~
 
 Python 3.10+ is required; the script uses only the standard library.
+Replace `<skill-directory>` with the absolute installed primary skill directory, as described in [the entry point](../SKILL.md#start).
 Include supporting design or plan paths when they are part of the work.
 Exit status is 0 for no findings, 1 for structural findings, and 2 for usage, configuration, or file errors.
 

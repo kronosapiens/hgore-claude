@@ -1,7 +1,7 @@
 {
-  "orchestrator_model": "fable",
-  "reviewer_model": "opus",
-  "implementer_model": "opus",
+  "orchestrator_model": "current",
+  "reviewer_model": "auto",
+  "implementer_model": "auto",
   "max_rounds": 2,
   "reviewer_count": 2
 }

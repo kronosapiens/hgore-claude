@@ -44,78 +44,34 @@ class ProjectTestCase(unittest.TestCase):
 class ConfigurationTests(ProjectTestCase):
     def test_defaults(self):
         self.assertEqual(
-            workflow.configuration(self.root),
+            workflow.configuration(),
             {
-                "orchestrator_model": "fable",
-                "reviewer_model": "opus",
-                "implementer_model": "opus",
+                "orchestrator_model": "current",
+                "reviewer_model": "auto",
+                "implementer_model": "auto",
                 "max_rounds": 2,
                 "reviewer_count": 2,
             },
         )
 
-    def test_partial_override_preserves_other_defaults(self):
-        self.write(
-            ".development-workflow.json",
-            json.dumps({"orchestrator_model": "astra", "max_rounds": 1}),
-        )
-        config = workflow.configuration(self.root)
-        self.assertEqual(config["orchestrator_model"], "astra")
-        self.assertEqual(config["max_rounds"], 1)
-        self.assertEqual(config["reviewer_model"], "opus")
-        self.assertEqual(config["reviewer_count"], 2)
-        self.assertEqual(workflow.configuration(self.directory)["max_rounds"], 2)
-
-    def test_supported_numeric_boundaries(self):
-        for rounds in (1, 10):
-            for reviewers in (1, 3):
-                with self.subTest(rounds=rounds, reviewers=reviewers):
-                    self.write(
-                        ".development-workflow.json",
-                        json.dumps({"max_rounds": rounds, "reviewer_count": reviewers}),
-                    )
-                    config = workflow.configuration(self.root)
-                    self.assertEqual(config["max_rounds"], rounds)
-                    self.assertEqual(config["reviewer_count"], reviewers)
-
-    def test_invalid_overrides_return_usage_error(self):
-        overrides = [
-            [],
-            None,
-            {"unexpected": "value"},
-            {"orchestrator_model": " "},
-            {"reviewer_model": 7},
-            *({"max_rounds": value} for value in (0, 11, True, 2.5, "3")),
-            *({"reviewer_count": value} for value in (0, 4, True, 2.0, "2")),
-        ]
-        for override in overrides:
-            with self.subTest(override=override):
-                self.write(".development-workflow.json", json.dumps(override))
-                status, stdout, stderr = self.invoke("config", "--root", self.root)
-                self.assertEqual(status, 2)
-                self.assertEqual(stdout, "")
-                self.assertIn("error:", stderr)
-
-    def test_malformed_json_returns_usage_error(self):
-        self.write(".development-workflow.json", "{")
-        status, _, stderr = self.invoke("config", "--root", self.root)
-        self.assertEqual(status, 2)
-        self.assertIn("error:", stderr)
-
-    def test_missing_configuration_root_is_rejected(self):
-        status, _, _ = self.invoke("config", "--root", self.root / "missing")
-        self.assertEqual(status, 2)
-
-    def test_script_resolves_bundle_from_an_unrelated_working_directory(self):
-        result = subprocess.run(
-            [sys.executable, str(SCRIPT), "config"],
-            cwd=self.root,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertEqual(json.loads(result.stdout)["reviewer_model"], "opus")
+    def test_cli_uses_bundle_from_unrelated_directory_without_project_configuration(self):
+        for legacy_file in (False, True):
+            with self.subTest(legacy_file=legacy_file):
+                if legacy_file:
+                    self.write(".development-workflow.json", "{")
+                before = {path.name: path.read_text() for path in self.root.iterdir()}
+                result = subprocess.run(
+                    [sys.executable, str(SCRIPT), "config"],
+                    cwd=self.root,
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(json.loads(result.stdout), workflow.configuration())
+                self.assertEqual(
+                    {path.name: path.read_text() for path in self.root.iterdir()}, before
+                )
 
 
 class ScaffoldTests(ProjectTestCase):

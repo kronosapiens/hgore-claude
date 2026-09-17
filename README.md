@@ -1,32 +1,45 @@
-# Development workflow for Claude Code
+# Development workflow for coding agents
 
 A fork of [hgorelick/hgore-claude](https://github.com/hgorelick/hgore-claude), organized around bounded features with automated adversarial review and revision.
-Fable orchestrates; independent Opus agents do most of the review.
+The current agent orchestrates, choosing capable implementation and independent review agents through the host's native tools.
+Automatic implementation selection prefers a cheaper capable model; explicit choices in the request make runs more repeatable.
 The human reviews the revised result, not each initial disagreement.
 
 ## Install
 
-From the target project, install the self-contained primary skill:
+Install the self-contained primary skill once for use across projects:
 
 ```bash
-npx skills add kronosapiens/hgore-claude --skill development-workflow --agent claude-code -y
+npx skills add kronosapiens/hgore-claude --skill development-workflow --agent codex --global -y
 ```
 
-Add `--global` if you want it available across projects.
+For Claude Code, replace `--agent codex` with `--agent claude-code`.
+Omit `--global` for a project-only installation.
 For a local checkout, replace `kronosapiens/hgore-claude` with its absolute directory path.
 Use that local-checkout form to try an unmerged branch; the repository-name command installs from the default branch.
 Installation includes the skill's references, templates, configuration, and Python helper.
 It does not install hooks, a statusline, or project settings.
 Python 3.10+ is required for the offline helper.
 
-Start Claude Code with `claude --model fable` and verify `/development-workflow` is available.
-Your Claude Code version and account must support the requested session and reviewer models.
+Verify the skill is available in your host, then invoke it using that host's skill interface.
+You can also ask the agent to read `/absolute/path/to/hgore-claude/skills/development-workflow/SKILL.md` and follow it for your request.
+Your host and account must support native subagents and the selected models.
 See [model routing](skills/development-workflow/references/models.md) for configuration and fallback behavior.
 
 ## Use
 
-Describe your intent naturally after `/development-workflow`.
+Describe your intent naturally when invoking the skill.
 No operation names, flags, or file paths are required when the request and conversation make the task clear.
+From any project directory, start Codex with the skill and your task:
+
+```bash
+codex '$development-workflow Implement the next ready chunk of CSV export.'
+```
+
+To select the implementer explicitly, add `Use gpt-5.6-sol for implementation.` to the same quoted prompt.
+Single quotes preserve the literal `$development-workflow` mention for [Codex skill invocation](https://learn.chatgpt.com/docs/build-skills).
+The agent works in the current directory; no project configuration file is needed.
+In an existing Claude Code session:
 
 ```text
 /development-workflow Begin designing a feature that lets users export their data.
@@ -35,7 +48,7 @@ No operation names, flags, or file paths are required when the request and conve
 /development-workflow Close the CSV export feature and update the project docs.
 ```
 
-Claude infers the feature, workflow stage, and relevant artifacts from your request, the conversation, and project docs.
+The agent infers the feature, workflow stage, and relevant artifacts from your request, the conversation, and project docs.
 It uses existing document locations or project naming conventions; no `features/` layout is required.
 If you say only "begin designing a new feature" without identifying one elsewhere, it asks what you want to build.
 Specify limits naturally, such as "findings only" or "design only"; choosing a workflow stage does not authorize additional actions.
@@ -78,24 +91,23 @@ Ordinary review disagreement does not require human arbitration.
 
 ## Configuration and authority
 
-[config.json](skills/development-workflow/config.json) supplies the defaults.
-An optional `.development-workflow.json` at the project root overrides individual fields:
-
-```json
-{
-  "orchestrator_model": "fable",
-  "reviewer_model": "opus",
-  "implementer_model": "opus",
-  "max_rounds": 2,
-  "reviewer_count": 2
-}
-```
+[config.json](skills/development-workflow/config.json) ships with the skill and supplies its defaults: the current session orchestrates, implementation and review models are selected automatically, and the revision budget is two rounds with two reviewers.
+Small changes use one reviewer under the review procedure.
 
 The [review procedure](skills/development-workflow/references/review.md#review-schedule) explains how these settings determine the schedule.
-The implementer model is what the orchestrator requests for the agent that builds from its brief.
-The session-model setting records intent; it does not switch the running host model.
-An Astra orchestrator is an alternative only in a host with an explicitly configured way to invoke the chosen reviewers; this pack does not provide cross-provider orchestration.
-Requested and observed models are reported separately.
+Supply overrides in the request, such as "Use gpt-5.6-sol for implementation and reviews, with one revision round."
+Standing preferences can live in existing agent instructions such as `AGENTS.md` or `CLAUDE.md`; explicit choices in the current request take precedence.
+For repeatable runs, name models tested on representative project tasks, using identifiers supported by your host.
+The skill does not read or create a project-specific configuration file.
+Existing `.development-workflow.json` files are no longer read; move any wanted preferences into the invocation or existing agent instructions.
+
+Automatic selection checks actual host access, task capability, and available cost evidence before choosing; it does not guarantee equal quality or savings.
+Compare tests, independent review, and total usage including retries when evaluating a cheaper model.
+The orchestrator announces concrete choices before invocation and does not silently replace explicit pins.
+`current` and `auto` are workflow directives, not tool model IDs; the Python helper does not discover models.
+The session-model setting records intent and does not switch the running host model, including for legacy concrete values such as `fable`.
+This pack does not provide cross-provider orchestration.
+Configured, requested, and observed models are reported separately; missing telemetry is reported as unavailable.
 
 Maintained project docs and relevant inline comments hold durable rationale; completed features and Git history hold historical context.
 There is no decision log, permanent approval ledger, or rule that a previously accepted choice cannot be questioned.
@@ -133,16 +145,16 @@ Never replace an existing settings file wholesale.
 
 ```bash
 python3 -m unittest discover -s tests -v
-python3 skills/development-workflow/scripts/workflow.py config --root .
+python3 skills/development-workflow/scripts/workflow.py config
 python3 skills/development-workflow/scripts/workflow.py lint README.md SDLC.md
 ```
 
-The helper validates configuration, safely scaffolds a feature and optional linked plan, and checks common local Markdown links and explicitly declared dependency tables.
+The helper validates bundled defaults, safely scaffolds a feature and optional linked plan, and checks common local Markdown links and explicitly declared dependency tables.
 It does not judge prose quality, enforce a document schema, or replace project tests and independent review.
 See [SDLC.md](SDLC.md) for the instruction map and [tests/README.md](tests/README.md) for installation and behavioral checks, including synthetic review and resumption fixtures.
 
 This change adapts the pack only.
-The Premise/Theo repository split is a separate implementation exercise, driven from its own Claude Code session.
+The Premise/Theo repository split is a separate implementation exercise, driven from its own agent session.
 
 ## License
 

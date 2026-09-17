@@ -16,7 +16,7 @@ This document summarizes their roles; follow the linked procedure for execution 
 | Required correctness and additional defensive work | [Defensive-work standard](skills/development-workflow/references/edge-cases.md) |
 | Producer and consumer discovery | [Data flow](skills/development-workflow/references/data-flow.md) |
 | Review schedule, dispositions, stopping, and checkpoints | [Review procedure](skills/development-workflow/references/review.md) |
-| Model invocation and observed-model reporting | [Model routing](skills/development-workflow/references/models.md) |
+| Model selection, invocation, and observed-model reporting | [Model routing](skills/development-workflow/references/models.md) |
 | Implementation and verification | [Execution](skills/development-workflow/references/execute.md) |
 | Feature acceptance and document updates | [Completion](skills/development-workflow/references/finish.md) |
 | Authorized Git and PR actions | [Publishing](skills/development-workflow/references/ship.md) |
@@ -37,6 +37,8 @@ Keep rationale with its design and carry enduring knowledge into the appropriate
 ## Review and judgment
 
 The orchestrator owns the artifact, finding dispositions, edits, and verification.
+The current agent orchestrates; automatic selection prefers a cheaper capable implementer and chooses reviewers for independent critical review.
+Explicit model choices in the request or existing agent instructions take precedence over automatic selection; no project-specific configuration file is needed.
 Independent reviewers inspect raw evidence and try to falsify the proposed result without inheriting the author's defense.
 The bounded review procedure includes revision, an applicable removal pass, and a fresh final audit.
 Ordinary disagreements are investigated within that procedure; missing product decisions or authority are surfaced to the user.

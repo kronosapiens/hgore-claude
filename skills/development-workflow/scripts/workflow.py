@@ -15,17 +15,8 @@ from urllib.parse import quote, unquote, urlsplit
 BUNDLE = Path(__file__).resolve().parents[1]
 
 
-def configuration(root: Path) -> dict:
+def configuration() -> dict:
     config = json.loads((BUNDLE / "config.json").read_text())
-    local = root / ".development-workflow.json"
-    if local.exists():
-        override = json.loads(local.read_text())
-        if not isinstance(override, dict):
-            raise ValueError(f"{local}: expected a JSON object")
-        unknown = override.keys() - config.keys()
-        if unknown:
-            raise ValueError(f"{local}: unknown fields: {', '.join(sorted(unknown))}")
-        config.update(override)
     for key in ("orchestrator_model", "reviewer_model", "implementer_model"):
         if not isinstance(config[key], str) or not config[key].strip():
             raise ValueError(f"{key} must be a nonempty model name")
@@ -220,8 +211,7 @@ def lint(path: Path) -> list[str]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
-    config_parser = commands.add_parser("config", help="resolve and validate model/budget settings")
-    config_parser.add_argument("--root", type=Path, default=Path.cwd())
+    commands.add_parser("config", help="validate and display bundled model/budget defaults")
     init_parser = commands.add_parser("init", help="create a feature and optional plan without overwriting")
     init_parser.add_argument("root", type=Path)
     init_parser.add_argument("--feature", type=Path, required=True)
@@ -231,9 +221,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     try:
         if args.command == "config":
-            if not args.root.is_dir():
-                raise ValueError(f"not a directory: {args.root}")
-            print(json.dumps(configuration(args.root.resolve()), indent=2))
+            print(json.dumps(configuration(), indent=2))
         elif args.command == "init":
             for path in scaffold(args.root, args.feature, args.plan):
                 print(path)

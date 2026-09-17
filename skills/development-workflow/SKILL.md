@@ -5,7 +5,7 @@ description: Define, plan, implement, and close bounded features with automated 
 
 # Development workflow
 
-Use this skill in Claude Code with a Fable orchestrator and Opus reviewers.
+The current agent orchestrates, selecting capable implementation and review agents through the host's native tools.
 It is an instruction-driven workflow using the host's agent tools, not a background scheduler.
 The user can review mature work after the agents have worked through the initial disagreements.
 
@@ -13,19 +13,22 @@ The user can review mature work after the agents have worked through the initial
 
 Read [project context and scope](references/context.md) before acting.
 Resolve all supporting files relative to this installed skill directory, never the project's working directory.
-In Claude Code, `${CLAUDE_SKILL_DIR}` names that directory.
-When reading this file through an alias, substitute the resolved primary skill directory in commands; do not assume the placeholder is a shell environment variable or points to the alias.
+Substitute the absolute primary skill directory for `<skill-directory>` in commands below.
+Find it from this `SKILL.md` file's location, including when the user points to the file directly or invokes an alias.
+The placeholder is not a shell environment variable and does not refer to the alias directory.
 
-Read [config.json](config.json), then any `.development-workflow.json` at the project root.
-The project file overrides only the fields it supplies; explicit user choices take precedence.
-Run `python3 "${CLAUDE_SKILL_DIR}/scripts/workflow.py" config --root <project-root>` to validate and resolve configuration.
-Configuration supplies model roles and revision limits; the [review procedure](references/review.md) owns the schedule and stopping conditions.
-Read [model routing](references/models.md) before starting a review.
+Read the bundled defaults in [config.json](config.json).
+Apply model and budget choices from the request or existing agent instructions; explicit choices in the current request take precedence.
+Do not read or create a project-specific configuration file for this skill.
+Run `python3 "<skill-directory>/scripts/workflow.py" config` to validate and display the bundled defaults, then apply any instruction overrides yourself.
+Keep `max_rounds` between 1 and 10 and `reviewer_count` between 1 and 3.
+The [review procedure](references/review.md) owns the schedule and stopping conditions.
+Read [model routing](references/models.md) before invoking implementation or review agents.
+Resolve `current` and `auto` through those instructions; they are directives for the orchestrator, not tool model IDs or Python model discovery.
 
 ## Interpret the user's intent
 
-Request: `$ARGUMENTS`.
-Treat the request as natural language, not a CLI grammar.
+Use the user's request and conversation as natural language, not a CLI grammar.
 Infer the operation, scope, and relevant artifacts from the request, conversation, and project context.
 A feature is a bounded delivery effort with an observable outcome and a completion point.
 Use one feature document by default, keeping its design and implementation plan inline.
