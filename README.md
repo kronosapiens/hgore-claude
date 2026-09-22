@@ -36,7 +36,7 @@ From any project directory, start Codex with the skill and your task:
 codex '$development-workflow Implement the next ready chunk of CSV export.'
 ```
 
-To select the implementer explicitly, add `Use gpt-5.6-sol for implementation.` to the same quoted prompt.
+To select the implementer explicitly, name the desired model in the same quoted prompt.
 Single quotes preserve the literal `$development-workflow` mention for [Codex skill invocation](https://learn.chatgpt.com/docs/build-skills).
 The agent works in the current directory; no project configuration file is needed.
 In an existing Claude Code session:
@@ -95,7 +95,7 @@ Ordinary review disagreement does not require human arbitration.
 Small changes use one reviewer under the review procedure.
 
 The [review procedure](skills/development-workflow/references/review.md#review-schedule) explains how these settings determine the schedule.
-Supply overrides in the request, such as "Use gpt-5.6-sol for implementation and reviews, with one revision round."
+Supply model and budget overrides in the request, naming the desired implementation and review models and the revision round limit.
 Standing preferences can live in existing agent instructions such as `AGENTS.md` or `CLAUDE.md`; explicit choices in the current request take precedence.
 For repeatable runs, name models tested on representative project tasks, using identifiers supported by your host.
 The skill does not read or create a project-specific configuration file.
@@ -105,7 +105,7 @@ Automatic selection checks actual host access, task capability, and available co
 Compare tests, independent review, and total usage including retries when evaluating a cheaper model.
 The orchestrator announces concrete choices before invocation and does not silently replace explicit pins.
 `current` and `auto` are workflow directives, not tool model IDs; the Python helper does not discover models.
-The session-model setting records intent and does not switch the running host model, including for legacy concrete values such as `fable`.
+The session-model setting records intent and does not switch the running host model.
 This pack does not provide cross-provider orchestration.
 Configured, requested, and observed models are reported separately; missing telemetry is reported as unavailable.
 
@@ -137,7 +137,7 @@ A broad versioned spec supplies context without making all of its outstanding wo
 The scaffold helper now uses `--feature <path>` with optional `--plan <path>`; it no longer requires or accepts `--spec`.
 
 The original hook and statusline scripts remain optional legacy utilities in this repository.
-The new workflow does not need them, and [settings.example.json](settings.example.json) no longer wires them up.
+The new workflow does not need them.
 An existing `block-self-scheduling` hook may interrupt automatic chaining; inspect your settings and remove that specific hook registration if unwanted, preserving unrelated settings.
 Never replace an existing settings file wholesale.
 

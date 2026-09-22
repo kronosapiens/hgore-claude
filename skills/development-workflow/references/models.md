@@ -1,7 +1,7 @@
 # Model routing
 
 Explicit choices in the current request override standing preferences in applicable agent instructions, which override bundled `config.json` defaults for model roles and the round budget.
-Accept model choices in ordinary language, such as "Use gpt-5.6-sol for implementation."
+Accept model choices in ordinary language.
 No project-specific configuration file is read or required.
 The defaults are `orchestrator_model: current`, `implementer_model: auto`, and `reviewer_model: auto`.
 `current` and `auto` are instructions resolved by the orchestrator, not model IDs to pass to agent tools.
@@ -11,7 +11,7 @@ This pack uses native host agent tools and does not implement a cross-provider r
 ## Select models
 
 The current session remains the orchestrator.
-A concrete `orchestrator_model`, including a legacy `fable` value, records session intent; it never switches the running host model.
+A concrete `orchestrator_model` records session intent; it never switches the running host model.
 Disclose a mismatch without claiming configuration changed the session.
 
 For an explicitly pinned implementer or reviewer, use that model when the host supports it.
