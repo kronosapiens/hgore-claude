@@ -59,7 +59,7 @@ Do not return to the user between ordinary rounds.
    Apply the [finding criteria](edge-cases.md#consequence-and-findings); reject speculative hardening with the concrete reason it is unsupported, while still verifying required behavior.
    A reviewer disagreement is something the orchestrator should investigate, not an automatic request for human arbitration.
 4. Apply accepted material fixes, addressing the cause and affected callers within scope — through the same implementer agent when one built the work, resumed rather than re-spawned.
-   An optional finding is never applied in the round it was found; carry it to the handoff's follow-up list for the user.
+   An optional finding goes to the handoff's follow-up list for the user to decide.
    Update rationale in the owning doc or code comment when needed.
    Revise coupled feature, design, or plan sections when authorized so the artifacts remain consistent.
    Do not weaken the requested outcome, rewrite governing user constraints, or grow the task to resolve a finding.
@@ -73,7 +73,7 @@ Do not return to the user between ordinary rounds.
 Reviewers may find a defect in unchanged text; they need not explain why an earlier reviewer missed it.
 Prior acceptance provides no immunity, and findings on new edits receive no automatic severity discount.
 A supported rejected finding can be closed; lack of evidence leaves a material concern unresolved.
-Optional findings do not drive additional rounds and are not applied within the run.
+Optional findings do not drive additional rounds.
 
 ## Deletion round
 
