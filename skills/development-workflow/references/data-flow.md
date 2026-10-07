@@ -26,7 +26,6 @@ Parsing establishes shape; provenance, authorization, and permission to disclose
 Name what an existing guard prevents and what becomes possible when it is removed or relaxed.
 Establish the parsing and shared interpretation that new consumers need before exposing them to the change.
 Separate a reshape from a change in accepted or shared data when each can be implemented and reviewed coherently on its own.
-Do not impose one PR per behavior when the changes need to land together.
 
 ## Verify the flow
 

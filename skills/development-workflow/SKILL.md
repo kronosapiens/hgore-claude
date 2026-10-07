@@ -84,6 +84,7 @@ Older commands are aliases with a dependency on this skill, not additional stage
 - Stop dependent work when completing it needs a material scope change, a missing product decision, or new external authority; finish useful independent work first.
 - A review verdict does not authorize commits, pushes, PR creation, PR edits, review comments, deployments, or messages.
   Honor authorization already given for those actions without asking again.
+- A feature ships as a single PR per repository unless the user explicitly directs otherwise; chunks are commits, not separate PRs.
 - Preserve unrelated work and do not expand a change to clean up unrelated findings.
 - Verify required behavior and screen additional defensive work using [expected, evidenced, or speculative triggers](references/edge-cases.md).
 - Keep each Markdown sentence on its own line and use the project's vocabulary.
