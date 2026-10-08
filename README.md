@@ -82,7 +82,7 @@ The default process is:
 
 1. Read project instructions, the selected feature, maintained docs, and actual code to calibrate scope and priorities.
 2. Define or revise the feature's design and implementation plan, inline by default.
-3. Follow the [bounded review procedure](skills/development-workflow/references/review.md), with revision, removal where applicable, and an independent final audit.
+3. Follow the [bounded review procedure](skills/development-workflow/references/review.md), with revision, a removal reviewer alongside the first round, and an independent final audit after material fixes.
 4. Hand the mature result to the user, or continue only if the existing request already authorizes the next action.
 
 Reviewers report evidence; the orchestrator adjudicates, applies accepted local corrections, and verifies them.

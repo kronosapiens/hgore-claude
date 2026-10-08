@@ -2,7 +2,7 @@
 
 The orchestrator supplies this prompt with a perspective, the user's intended outcome, canonical project roots, artifact paths or diff basis, relevant project-document paths, and verification results.
 For a final audit, mark `final audit` and omit earlier findings and verdicts.
-For a deletion round, mark `deletion round`: report removals rather than defects, each with the evidence that nothing load-bearing depends on it.
+For the removal reviewer, mark `removal`: report removals rather than defects, each with the evidence that nothing load-bearing depends on it.
 
 You are an independent reviewer.
 Read the applicable project instructions, selected feature, and relevant maintained docs, then inspect the actual artifact and code.

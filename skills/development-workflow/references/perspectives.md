@@ -29,7 +29,7 @@ Prefer mechanisms and existing project controls over adding speculative policy m
 
 ## Removal
 
-For a deletion round only.
+For the removal reviewer, which runs alongside a round's other reviewers.
 Look for what can go without changing required behavior: tests that restate the implementation or duplicate another proof, speculative guards, abstractions that add indirection without serving a concrete need, comments narrating history, fields nothing reads, and hand-rolled adapters where an existing library serves.
 Do not remove acceptance or recovery tests merely because the behavior is recoverable, or an abstraction merely because it has one caller.
 Score each removal by the standard as an addition would be scored, with the evidence that nothing load-bearing depends on it.

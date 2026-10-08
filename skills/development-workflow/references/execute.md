@@ -22,7 +22,7 @@ Implement the smallest coherent change that meets the chunk's acceptance criteri
 When an implementer agent builds the chunk, the orchestrator writes it a brief: the outcome, the behaviors the chunk delivers, the files and the seams that must survive, the project rules that bite, the verification to run, and what to report back.
 For a boundary or data-flow change, include the [consumer inventory](data-flow.md); the implementer verifies and extends it, reporting each affected consumer's change or continued compatibility.
 A brief names the required behaviors and verification obligations; it does not prescribe a test per design sentence or promote speculative hardening into required work.
-The same implementer carries the revision rounds and the deletion round, resumed with each round's accepted findings rather than re-spawned.
+The same implementer carries the revision rounds, removals included, resumed with each round's accepted findings rather than re-spawned.
 Use existing abstractions and update affected callers within scope.
 Use an existing library before writing an adapter, client, parser, or protocol implementation by hand.
 Mark the feature active when implementation begins, following the project's status conventions.
@@ -45,7 +45,7 @@ Do not edit the PR body or publish review comments without authorization.
 
 Update chunk progress and verification evidence in the feature or owning plan.
 A complete chunk does not mean the whole feature is complete.
-For a whole-feature request, advance only after the current chunk's required checks and code review are complete.
+For a whole-feature request, advance only after the current chunk's required checks pass and its code review is complete.
 When the authorized feature scope is finished, follow [completion](finish.md) to verify the overall outcome and update maintained docs.
 Handoff the reviewed diff, acceptance evidence, important changes, and remaining questions when the requested scope is finished or cannot proceed.
 Proceed to [publishing](ship.md) only when the user has authorized it, including authorization already given for this task.

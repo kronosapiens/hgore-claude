@@ -13,8 +13,10 @@ Other workflow instructions refer here rather than defining separate versions of
 Use the resolved `max_rounds` and `reviewer_count` from configuration for the revision phase.
 One reviewer serves a small change; otherwise use the configured count, selecting distinct perspectives when several reviewers run.
 The revision phase may end early when no material findings or edits remain.
-It is followed by the deletion round when applicable and one fresh final audit, as defined below.
-Changing the reviewer count does not remove those stages.
+When the artifact has meaningful removal candidates, the first round adds one reviewer with the [removal perspective](perspectives.md#removal), running alongside the others rather than as a later stage.
+Run another revision round, within budget, when material findings remain unresolved or accepted behavior or design changes need independent review.
+Corrections to wording, comments, or tests that the checks verify do not by themselves require another round.
+A fresh final audit runs only after the revision phase accepted a material finding, so substantive fixes get an independent look; a phase whose rounds found nothing material ends without one.
 
 ## Establish the review
 
@@ -48,7 +50,7 @@ Do not return to the user between ordinary rounds.
 
 1. Increment and persist the round counter before launching a new revision round.
    Resuming an interrupted round does not increment it again.
-2. Launch the selected reviewers in parallel as fresh agents on the same artifact version.
+2. Launch the selected reviewers in parallel as fresh agents on the same artifact version, with the removal reviewer alongside them in the first round when one is due.
    Give them the [reviewer prompt](reviewer.md), perspective, scope, relevant paths, and verification evidence.
    Give neither the author's defense nor other reviewers' findings.
    Let them form an initial assessment before supplying prior findings for a targeted completeness check if needed.
@@ -67,26 +69,25 @@ Do not return to the user between ordinary rounds.
    A failed check or a fix that creates a new defect remains pending for the next round.
    Re-check the behavior affected by each accepted fix, not just the edited sentence or line.
 6. Persist the round result and pending findings.
-   Continue when substantive defects remain or accepted edits need independent review.
-   End the revision phase early after a round with no material findings or edits.
+   Continue when substantive defects remain or an accepted fix changed behavior or the design and needs independent review.
+   End the revision phase when neither continuation condition applies, or when its budget is exhausted.
 
 Reviewers may find a defect in unchanged text; they need not explain why an earlier reviewer missed it.
 Prior acceptance provides no immunity, and findings on new edits receive no automatic severity discount.
 A supported rejected finding can be closed; lack of evidence leaves a material concern unresolved.
 Optional findings do not drive additional rounds.
 
-## Deletion round
+## Removal
 
-After the revision phase ends, consider the complete artifact for meaningful removal candidates under the [removal perspective](perspectives.md#removal).
-When candidates exist, run one deletion round before the audit, regardless of the revision count or whether earlier reviewers found defects.
+The removal reviewer runs in the first round, alongside the others, with the [reviewer prompt](reviewer.md) marked `removal` and the removal perspective from [perspectives.md](perspectives.md).
+It considers the complete artifact and reports removals rather than defects, with evidence that each preserves required behavior.
 Skip it only when there are no meaningful candidates across all removal categories, and report the reason.
-Launch one fresh reviewer with the [reviewer prompt](reviewer.md) marked `deletion round` and the removal perspective from [perspectives.md](perspectives.md).
-It reports removals rather than defects, with evidence that the proposed removal preserves required behavior.
-Dispose of each removal as findings are disposed of: accept only with a factual reason, apply accepted removals, and re-run the affected checks.
+Dispose of each removal as findings are disposed of: accept only with a factual reason, apply accepted removals with the round's other fixes, and re-run the affected checks.
+A removal that changes a guard or predicate counts as a behavior change when scheduling a further round or the final audit.
 
 ## Fresh final audit
 
-After the deletion round, launch one fresh reviewer over the complete final artifact and its affected context.
+When the revision phase accepted a material finding, launch one fresh reviewer over the complete final artifact and its affected context once the last round's fixes are verified.
 Supply the intended outcome, relevant project docs, code/diff, and actual verification results.
 Do not supply prior verdicts, disposition history, or the orchestrator's defense.
 The audit uses the configured reviewer model and sits outside the revision budget.
@@ -99,7 +100,7 @@ A material missing decision or external permission ends the dependent work; fini
 
 ## Result and human handoff
 
-- `ready for user review`: the final audit ran, required verification passed, and every material finding is resolved or rejected with evidence.
+- `ready for user review`: the final audit ran when one was due, required verification passed, and every material finding is resolved or rejected with evidence.
 - `needs input`: a material product/scope/authorization decision is required.
 - `review incomplete`: the budget ended with material findings, the final audit found an unresolved defect, required checks could not be completed, or independent reviewers were unavailable.
 
@@ -123,7 +124,7 @@ If artifacts changed externally, invalidate affected evidence without silently r
 Do not re-run completed stages merely because the conversation restarted.
 
 If a run hands off with unresolved work after consuming its revision budget, or its final audit leaves material findings, preserve the checkpoint and report the incomplete result.
-Using the last revision round does not prevent completion of that round or the scheduled deletion round and final audit.
+Using the last revision round does not prevent completion of that round or a final audit that is due.
 The user's explicit request to resolve those findings and continue authorizes a new bounded run; carry forward unresolved findings and current authorization without treating prior verdicts as authority.
 Resuming an interrupted run with work still pending does not use that exception.
 

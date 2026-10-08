@@ -32,7 +32,7 @@ Supported choices within `auto` need no extra confirmation.
 Keep selections stable for the run and report any necessary change explicitly.
 Pass the selected concrete model to the host tool; never pass `auto` or rely on accidental inheritance.
 For execution, delegate implementation to the selected agent with the brief described in [execution](execute.md).
-Keep the same implementer through revisions and the deletion round, following [execution](execute.md) and [review](review.md).
+Keep the same implementer through revisions and removals, following [execution](execute.md) and [review](review.md).
 
 Explicit tested model choices in the invocation or existing agent instructions are preferable when repeatability matters.
 Evaluate prospective cheaper models on representative project tasks using tests, independent review, and total usage including retries.

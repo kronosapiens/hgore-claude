@@ -40,7 +40,7 @@ The orchestrator owns the artifact, finding dispositions, edits, and verificatio
 The current agent orchestrates; automatic selection prefers a cheaper capable implementer and chooses reviewers for independent critical review.
 Explicit model choices in the request or existing agent instructions take precedence over automatic selection; no project-specific configuration file is needed.
 Independent reviewers inspect raw evidence and try to falsify the proposed result without inheriting the author's defense.
-The bounded review procedure includes revision, an applicable removal pass, and a fresh final audit.
+The bounded review procedure runs revision with a removal reviewer alongside it, and a fresh final audit after material fixes.
 Ordinary disagreements are investigated within that procedure; missing product decisions or authority are surfaced to the user.
 
 Required behavior receives appropriate verification.

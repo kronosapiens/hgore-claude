@@ -51,7 +51,7 @@ In a disposable project, give the installed skill a feature with inline design a
 Request review and local corrections, explicitly withholding permission to commit, push, or publish.
 Use the current orchestrator with explicitly selected available reviewers and a small spend limit when supported by the host.
 
-Check that reviewers independently inspect project context, the orchestrator adjudicates and corrects findings without intermediate human approval, corrected work receives independent review, and a fresh final audit runs.
+Check that reviewers independently inspect project context, the orchestrator adjudicates and corrects findings without intermediate human approval, corrected work receives independent review, and a fresh final audit runs if any material finding was accepted during the revision phase, even when a later round is clean, and is skipped otherwise.
 Confirm the round limit, authorization boundaries, checkpoint retention for unfinished work, cleanup after completion, and requested versus observed model reporting.
 For closure, supply a feature whose chunks are marked done but whose combined acceptance check is unverified; it should remain incomplete until verified.
 After verified completion, check that doc updates preserve their intended role while recording the delivered outcome, and that later enhancements start a new feature.
