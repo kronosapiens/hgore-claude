@@ -1,7 +1,7 @@
 # Implement a feature
 
 Resolve the feature and any supporting documents through [project context](context.md), then read project guidance and current code.
-Use the implementation checklist in the feature, a linked plan, or an optional detailed chunk document.
+Use the implementation plan in the feature issue or an optional detailed chunk document.
 Honor whether the user requested one chunk, the next ready chunk, or the whole feature.
 For the next ready chunk, use the documented order and actual dependencies; ask only when the choice materially changes scope.
 For a whole-feature request, continue through ready chunks and their review loops within the existing authorization.
@@ -9,7 +9,6 @@ Check actual prerequisites in the code and available review evidence, not a mand
 Verify required foundations before implementing dependent feature behavior.
 If a missing foundation emerges, revise the ordering and establish it within the authorized scope rather than duplicating it inside each consumer.
 If the selected work's current design and plan have not been reviewed, run the design review loop before implementation.
-These can be sections in the feature document; separate files are unnecessary.
 The request to execute authorizes implementing the selected work after that review is ready.
 Do not continue into implementation from an incomplete design review.
 
@@ -25,7 +24,6 @@ A brief names the required behaviors and verification obligations; it does not p
 The same implementer carries the revision rounds, removals included, resumed with each round's accepted findings rather than re-spawned.
 Use existing abstractions and update affected callers within scope.
 Use an existing library before writing an adapter, client, parser, or protocol implementation by hand.
-Mark the feature active when implementation begins, following the project's status conventions.
 Plans guide the work and may be refined as facts become clear; keep them consistent with the feature's acceptance criteria and requested outcome.
 Do not turn an ordinary implementation adjustment into a request to amend a frozen contract.
 
@@ -43,7 +41,7 @@ No PR is required to review code.
 If a PR already exists, inspect it read-only and include the current local changes in the review basis.
 Do not edit the PR body or publish review comments without authorization.
 
-Update chunk progress and verification evidence in the feature or owning plan.
+Check off chunk progress and record verification evidence in the feature issue, using the [editing procedure](context.md#select-and-edit-the-feature).
 A complete chunk does not mean the whole feature is complete.
 For a whole-feature request, advance only after the current chunk's required checks pass and its code review is complete.
 When the authorized feature scope is finished, follow [completion](finish.md) to verify the overall outcome and update maintained docs.

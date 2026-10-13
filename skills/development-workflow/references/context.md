@@ -3,33 +3,33 @@
 Resolve the project root and inspect Git status before editing.
 Read applicable AGENTS.md and CLAUDE.md instructions, then the docs relevant to the task and the code they discuss.
 For several repositories, record each root and give every reviewer the relevant paths in each repository.
-Keep one feature entry point with explicit repository ownership and links to any shared design or plan.
+Keep one feature issue in the owning repository with explicit repository ownership of each change; other repositories reference it as `owner/repo#N`.
 
-## Select the feature
+## Select and edit the feature
 
-Identify the bounded change from the user's request, conversation, explicit path, or a supporting plan's `Feature` link.
+A feature is a GitHub issue in the repository that owns it, labeled `feature` or with the project's established label for feature specs.
+Its body is the feature document: outcome, scope, acceptance criteria, design, the implementation plan as a task list or chunk table, and verification evidence.
+Identify the feature from the user's request, conversation, an issue number or URL, or by searching open issues with the label, such as `gh issue list --label feature`.
+When several features could match and the conversation does not select one, ask rather than choosing by title, number, or recency.
 Resolve Markdown links relative to their document and command-line paths relative to the invocation directory.
-If an explicit selection disagrees with a document's link, disclose the mismatch and reconcile it within authorized edits; ask if ownership or scope remains ambiguous.
-When several features could match and the conversation does not select one, ask rather than choosing by filename, version number, or recency.
-Use the project's existing document layout; otherwise a descriptive path such as `docs/features/csv-export.md` is sufficient.
-Do not require a feature registry, directory tree, or sequential spec versions.
 
-Use one feature document by default for the outcome, scope, acceptance criteria, design, implementation chunks, and verification evidence.
-Separate design or plan files are useful when detail would obscure that entry point.
-Link them from the feature, and link a separate plan back to its feature.
-Keep each piece of information in its owning document instead of duplicating it across files.
-
-Existing specs and plans can supply the same information without a new wrapper or migration.
-For a legacy plan, follow its `Spec` link and identify the requested bounded change within those documents.
+A supporting document that warrants its own unit, such as an optional brief, vision, or detailed chunk document, is its own issue, linked from the feature issue.
+Keep each piece of information in its owning document rather than duplicating it.
+Existing in-repo specs and plans remain readable project context, but new feature work goes in an issue.
 A broad or versioned spec is project context, not an instruction to implement every outstanding change or create the next version.
 Preserve explicit requests to review or edit an existing spec as scoped document work.
 
+To edit an issue body, fetch it to a working copy with `gh issue view <N> --json body -q .body > <copy>`, edit the copy, and push it back with `gh issue edit <N> --body-file <copy>` after each round of edits so the issue never lags the reviewed version.
+Keep the working copy in the run directory that [the review procedure](review.md#establish-the-review) describes, creating that directory when authoring starts if no review has started.
+Reviewers and lint read the working copy; the review state records the issue number and the copy's hash as the artifact basis.
+GitHub caps an issue body at 65,536 characters; when the body would exceed it, the plan moves to the issue's first comment, edited by its id with `gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@<copy>`.
+
 ## Feature lifecycle and maintained docs
 
-Follow project status conventions; otherwise use `draft`, `active`, and `complete`.
-Draft covers definition and planning; active begins with implementation; complete requires verified feature acceptance and updated maintained docs.
-Review readiness is separate from implementation status.
-Keep unfinished or unverified work visible, and do not mark a feature complete merely because its chunks are checked off.
+An open feature issue is in progress; a closed one is complete and kept as the historical record.
+Closing requires verified feature acceptance and updated maintained docs.
+Review readiness is separate from whether the issue is open or closed.
+Keep unfinished or unverified work visible, and do not close a feature merely because its task list is checked off.
 Later enhancements normally begin a new bounded feature that builds on current behavior.
 
 Determine each document's purpose and status from project guidance and its contents: current behavior, intended direction, an active change, or historical context.

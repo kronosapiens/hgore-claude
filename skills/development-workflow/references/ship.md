@@ -22,6 +22,7 @@ Do not publish code that has unresolved material review findings or required che
 
 Lead the PR description with the concrete change and resulting behavior.
 Include verification and any operational coordination notes that matter.
+In the PR that completes a feature, include `Closes #<N>` for its issue, or `Closes owner/repo#N` from another repository.
 Describe operational coordination and any required compatibility behavior using the project's [deployment requirements](context.md#proportional-implementation).
 Do not merge unless the user asks.
 Return the PR URL and material verification limits.

@@ -6,7 +6,7 @@ Run the offline helper suite with Python 3.10+:
 python3 -m unittest discover -s tests -v
 ```
 
-Coverage includes bundled defaults from unrelated working directories, single-document feature scaffolding, optional plans with reciprocal links, unsafe paths, overwrite protection, local Markdown links, dependency-table errors, and CLI exit codes.
+Coverage includes bundled defaults from unrelated working directories, local Markdown links, dependency-table errors, and CLI exit codes.
 Fixtures use temporary directories and do not modify existing project documents.
 These tests do not prove model routing or review behavior.
 
@@ -17,10 +17,7 @@ From an empty disposable project directory, install from an absolute checkout pa
 ```bash
 npx skills add /absolute/path/to/hgore-claude --skill development-workflow execute-plan plan-lint --agent codex -y
 python3 .agents/skills/development-workflow/scripts/workflow.py config
-python3 .agents/skills/development-workflow/scripts/workflow.py init . --feature docs/features/csv-export.md
-python3 .agents/skills/plan-lint/lint.py docs/features/csv-export.md
-python3 .agents/skills/development-workflow/scripts/workflow.py init . --feature docs/features/scheduled-exports.md --plan docs/plans/scheduled-exports.md
-python3 .agents/skills/plan-lint/lint.py docs/features/scheduled-exports.md docs/plans/scheduled-exports.md
+python3 .agents/skills/plan-lint/lint.py .agents/skills/development-workflow/SKILL.md
 ```
 
 For Claude Code, repeat in another disposable project with `--agent claude-code` and `.claude/skills/` paths.
@@ -43,7 +40,7 @@ Compare representative implementations by acceptance checks, material review fin
 
 Check natural-language routing in a fresh disposable project by pointing at the primary `SKILL.md` with the request "Begin designing a new feature".
 Without a feature described in the conversation or project, the agent should ask for the intended outcome, not invent one or demand flags and paths.
-With the outcome supplied, check that design and planning can remain in one named feature document.
+With the outcome supplied and a disposable GitHub repository, check that design and planning stay in one feature issue.
 With an existing feature and a request such as "implement the next ready chunk, but don't commit", check that it infers the target while preserving scope and the publishing restriction.
 For a whole-feature request, check that it continues through ready chunks and verifies their combined outcome.
 
@@ -55,7 +52,7 @@ Check that reviewers independently inspect project context, the orchestrator adj
 Confirm the round limit, authorization boundaries, checkpoint retention for unfinished work, cleanup after completion, and requested versus observed model reporting.
 For closure, supply a feature whose chunks are marked done but whose combined acceptance check is unverified; it should remain incomplete until verified.
 After verified completion, check that doc updates preserve their intended role while recording the delivered outcome, and that later enhancements start a new feature.
-Repeat feature selection with a legacy plan's `Spec` link into a broad versioned spec; the request should select only its bounded change without forcing migration or advancing the spec version.
+Repeat feature selection with a broad versioned spec in the repository; it should serve as context without forcing migration or advancing the spec version.
 Inspect the resulting files yourself; a model's success report is not sufficient evidence.
 Report authentication or model-availability failures as untested behavior rather than a passing smoke test.
 When scripting Claude Code, retain the `project` settings source so installed project skills are discoverable; disabling all settings sources also hides those skills.

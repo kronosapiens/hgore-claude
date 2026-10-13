@@ -8,7 +8,7 @@ Discovering the affected flow is ordinary impact analysis, before scoring possib
 Search for the underlying store, fields, and accessors as well as changed symbols.
 Follow producers through parsing and persistence to readers and outbound destinations, including background jobs, projections, and relevant services in other repositories.
 For a selection change, identify the newly included records and where they go.
-Keep a concise inventory in the existing feature, plan, or implementer brief: the relevant paths, what each consumes or produces, and whether it changes or why it remains compatible.
+Keep a concise inventory in the feature issue or implementer brief: the relevant paths, what each consumes or produces, and whether it changes or why it remains compatible.
 This is evidence for the current change, not a permanent dependency registry.
 
 The author discovers the flow, the implementer verifies and extends it, and the reviewer independently searches the code before comparing with the supplied inventory.

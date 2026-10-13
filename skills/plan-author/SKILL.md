@@ -1,6 +1,6 @@
 ---
 name: plan-author
-description: Author optional chunk details in a feature or implementation plan using development-workflow.
+description: Author optional chunk details in a feature issue using development-workflow.
 ---
 
 # plan-author
@@ -10,7 +10,7 @@ Read [development-workflow](../development-workflow/SKILL.md) and follow its `ch
 Load its referenced instructions relative to that skill's directory, not this alias.
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
-Select the named chunk; write a section unless the user requested a separate file.
+Select the named chunk; write a section of the feature issue unless the user requested a separate chunk document.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.
 These aliases preserve command names, not the old mandatory artifact chain, flags, or cache formats.

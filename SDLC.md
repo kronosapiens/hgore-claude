@@ -24,8 +24,8 @@ This document summarizes their roles; follow the linked procedure for execution 
 ## Features and project context
 
 Organize work around a bounded outcome and observable acceptance criteria.
-Use the project's document conventions, with one feature document as the default when no convention exists.
-Separate plans and chunk documents are optional aids; they do not create extra approval stages.
+Each feature is a GitHub issue in the repository that owns it, with its design and implementation plan in the body.
+Supporting issues, such as a detailed chunk document, are optional aids; they do not create extra approval stages.
 Distinguish current behavior, intended direction, active work, and historical context when reading or updating documents.
 Project requirements determine compatibility and recovery obligations, with simple implementation as the default when no stronger requirement applies.
 

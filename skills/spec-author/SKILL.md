@@ -10,8 +10,7 @@ Read [development-workflow](../development-workflow/SKILL.md) and follow its `de
 Load its referenced instructions relative to that skill's directory, not this alias.
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
-Use the requested Markdown path and project conventions; no fixed root filename or decomposition schema.
-For new work, define a bounded feature with inline design and planning.
+For new work, define a bounded feature as a GitHub issue with its design and plan in the body.
 Honor explicit requests to revise an existing spec without advancing its version or expanding its scope.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.

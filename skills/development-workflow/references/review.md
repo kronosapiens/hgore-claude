@@ -20,9 +20,8 @@ A fresh final audit runs only after the revision phase accepted a material findi
 
 ## Establish the review
 
-1. Identify the requested outcome, artifact paths, relevant repositories, and verification commands.
-   Read the selected feature, relevant maintained docs, and any supporting design or implementation plan.
-   Design and planning may be inline in the feature; separate files are unnecessary.
+1. Identify the requested outcome, the feature issue or artifact paths, relevant repositories, and verification commands.
+   Read the selected feature, relevant maintained docs, and any supporting documents.
 2. For code, resolve the diff against the requested base or the PR's actual base, including relevant staged, unstaged, and untracked task files.
    Snapshot Git status and existing changes so the agent can distinguish its edits from unrelated work.
    If there is no PR, review the local diff normally; creating a PR is not a prerequisite.
@@ -32,10 +31,10 @@ A fresh final audit runs only after the revision phase accepted a material findi
 4. Select perspectives for the reviewers under the schedule above.
    Each reviewer reads the relevant project instructions, feature, maintained docs, and code directly.
    Optional project persona files supplement the bundled perspectives; their absence never blocks review.
-5. Create one temporary run directory in a permitted project scratch location and a small state file inside it.
+5. Create one temporary run directory in a permitted project scratch location, unless authoring already created it, and a small state file inside it.
    For example, use `mktemp -d "<project-root>/.development-workflow-run.XXXXXX"` and exclude that exact directory from staging.
    Do not assume a global temporary directory is within the host's deletion permissions.
-   Record canonical repository roots, artifact paths and hashes or diff basis, authorization scope, configured models, round limit, and current round.
+   Record canonical repository roots, artifact paths and hashes, a feature issue's number and [working copy](context.md#select-and-edit-the-feature) hash, or diff basis, authorization scope, configured models, round limit, and current round.
    Keep the current phase, completed and pending reviewer work, findings and dispositions, and verification results there to survive interruption or compaction.
    Store no credentials, source payloads, or copied project documentation in this state.
 
@@ -129,5 +128,5 @@ The user's explicit request to resolve those findings and continue authorizes a 
 Resuming an interrupted run with work still pending does not use that exception.
 
 Delete the checkpoint only when its run is complete or the user explicitly abandons it, unless the user requested retention.
-Remove only the exact state file, then use `rmdir` on the exact empty run directory; never recursively delete the directory or remove project artifacts with it.
+Remove only the exact state file and any issue working copies, then use `rmdir` on the exact empty run directory; never recursively delete the directory or remove project artifacts with it.
 The handoff report carries completed review evidence; the checkpoint is temporary progress tracking, not a permanent decision log.

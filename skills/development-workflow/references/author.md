@@ -2,9 +2,9 @@
 
 Start from the user's intent and the relevant project documents and code.
 Select the bounded feature and artifacts using [project context](context.md).
-For new work, use one feature document with inline design and implementation planning.
+For new work, create the feature issue through [setup](setup.md) and write its design and implementation plan in the body, using the [editing procedure](context.md#select-and-edit-the-feature).
 The bundled [feature template](../templates/feature.md) is a starting point, not a required section schema.
-Use an existing spec or plan when it already describes the requested change.
+Use an existing feature issue when it already describes the requested change.
 
 ## Design
 
@@ -23,7 +23,7 @@ They use the same review loop without creating additional mandatory layers.
 
 ## Implementation plan
 
-Plan in the feature's implementation section by default, using a short checklist for simple work.
+Plan in the feature issue's implementation section, or its first comment when the body is too long, using a short task list for simple work.
 Identify coherent, reviewable chunks and their dependencies, and connect each chunk's acceptance evidence to the feature's criteria.
 Identify foundations the feature needs: shared contracts, representations, storage access, parsing, or components that later work depends on.
 Establish and verify those foundations in the earliest coherent chunk before building their dependent feature behavior.
@@ -36,14 +36,11 @@ For multiple repositories, name which repository owns each change and contract.
 Keep later chunks coarse until earlier work establishes the code they depend on.
 Sequential chunks can edit the same file; isolate only concurrent edits that would conflict.
 Use a small dependency table when it makes ordering clearer.
-Use a separate plan when substantial detail warrants it or the user requests an output path.
-Link it from the feature and back to the feature, moving implementation detail instead of maintaining two plans.
-The bundled [plan template](../templates/plan.md) is an example, not a required section schema.
 
-A chunk can be defined directly in the feature or a separate plan.
-Write a separate chunk document only when substantial implementation detail deserves its own readable unit.
+A chunk is defined directly in the feature issue.
+Write a separate chunk document, as its own issue, only when substantial implementation detail deserves its own readable unit.
 The execution skill can select either representation.
-Optional chunk authoring is a section edit unless the user names a separate output path.
+Optional chunk authoring is a section edit unless the user requests a separate chunk document.
 
 ## Validate and review
 

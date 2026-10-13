@@ -20,6 +20,7 @@ Use that local-checkout form to try an unmerged branch; the repository-name comm
 Installation includes the skill's references, templates, configuration, and Python helper.
 It does not install hooks, a statusline, or project settings.
 Python 3.10+ is required for the offline helper.
+Feature work needs the GitHub CLI (`gh`), authenticated for the repository that owns the feature.
 
 Verify the skill is available in your host, then invoke it using that host's skill interface.
 You can also ask the agent to read `/absolute/path/to/hgore-claude/skills/development-workflow/SKILL.md` and follow it for your request.
@@ -49,30 +50,28 @@ In an existing Claude Code session:
 ```
 
 The agent infers the feature, workflow stage, and relevant artifacts from your request, the conversation, and project docs.
-It uses existing document locations or project naming conventions; no `features/` layout is required.
 If you say only "begin designing a new feature" without identifying one elsewhere, it asks what you want to build.
 Specify limits naturally, such as "findings only" or "design only"; choosing a workflow stage does not authorize additional actions.
 
 Authoring and execution include review and revision automatically.
 A separate review request is useful for existing artifacts or subsequent changes, not a mandatory duplicate stage.
-You can also ask it to scaffold a feature, check links and dependencies, explain findings, or publish an explicitly authorized PR.
+You can also ask it to create a feature issue, check links and dependencies, explain findings, or publish an explicitly authorized PR.
 
 A feature is a bounded delivery effort with an outcome, scope, acceptance criteria, and completion point.
-Start with one document containing its design, implementation checklist, and verification evidence.
-Add separate design or plan files when the work needs them.
-Use descriptive names such as `docs/features/csv-export.md`; new work does not advance a sequence of spec versions.
+It is a GitHub issue in the repository that owns it, labeled `feature` or with the project's established label.
+The issue body holds its design, implementation task list, and verification evidence; the agent edits it through a local working copy.
 
-Follow project status conventions, or use `draft`, `active`, and `complete`.
-Completion requires verified feature acceptance and updated maintained project docs, including behavior across implementation chunks.
+An open feature issue is in progress, and a closed one is the historical record.
+Closing requires verified feature acceptance and updated maintained project docs, including behavior across implementation chunks; the implementing PR's `Closes #<N>` closes the issue at merge.
 Interpret project docs by their purpose and status, preserving the distinction between delivered behavior and future intent.
 A later enhancement, such as scheduled exports, starts a new feature using the current system as its baseline.
 
-Explicit operations and paths remain optional shorthand:
+Explicit operations and issue numbers remain optional shorthand:
 
 ```text
-/development-workflow design docs/features/csv-export.md
-/development-workflow plan docs/features/csv-export.md
-/development-workflow execute docs/features/csv-export.md --chunk download
+/development-workflow design #42
+/development-workflow plan #42
+/development-workflow execute #42 --chunk download
 /development-workflow review code --base main
 ```
 
@@ -109,12 +108,13 @@ The session-model setting records intent and does not switch the running host mo
 This pack does not provide cross-provider orchestration.
 Configured, requested, and observed models are reported separately; missing telemetry is reported as unavailable.
 
-Maintained project docs and relevant inline comments hold durable rationale; completed features and Git history hold historical context.
+Maintained project docs and relevant inline comments hold durable rationale; closed feature issues and Git history hold historical context.
 There is no decision log, permanent approval ledger, or rule that a previously accepted choice cannot be questioned.
 An unfinished run retains a small checkpoint so interruption or handoff does not lose its findings, verification, or remaining budget.
 
 Local corrections are automatic within the requested workflow scope.
 Commits, pushes, PR creation or updates, comments, merges, and deployments require user authorization; a clean verdict grants none.
+A request to work on a feature authorizes creating and editing its issue and supporting issues, and no other issue edits or comments.
 A request to open a PR includes the necessary commit and push, without authorizing a merge or deployment.
 Deployment coordination belongs in PR notes; compatibility mechanisms follow the project's actual requirements.
 
@@ -132,9 +132,8 @@ Aliases accept natural-language requests for their respective operations, with e
 Names are retained, but old positional feature names and legacy flags are not an API compatibility promise.
 The old shared protocol directories and decision-log templates have been retired.
 Existing project documents are not deleted or migrated by installation.
-Existing spec/plan pairs remain usable for a requested bounded change, including plans with a legacy `Spec` link.
+Existing in-repo specs and plans remain readable project context; new feature work goes in an issue.
 A broad versioned spec supplies context without making all of its outstanding work part of the selected feature.
-The scaffold helper now uses `--feature <path>` with optional `--plan <path>`; it no longer requires or accepts `--spec`.
 
 The original hook and statusline scripts remain optional legacy utilities in this repository.
 The new workflow does not need them.
@@ -149,7 +148,7 @@ python3 skills/development-workflow/scripts/workflow.py config
 python3 skills/development-workflow/scripts/workflow.py lint README.md SDLC.md
 ```
 
-The helper validates bundled defaults, safely scaffolds a feature and optional linked plan, and checks common local Markdown links and explicitly declared dependency tables.
+The helper validates bundled defaults and checks common local Markdown links and explicitly declared dependency tables.
 It does not judge prose quality, enforce a document schema, or replace project tests and independent review.
 See [SDLC.md](SDLC.md) for the instruction map and [tests/README.md](tests/README.md) for installation and behavioral checks, including synthetic review and resumption fixtures.
 

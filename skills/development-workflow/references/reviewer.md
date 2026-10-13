@@ -23,7 +23,7 @@ Find actual defects, omissions, contradictions, and unnecessary machinery; do no
 An unfamiliar design is not a defect by itself.
 For stored shapes, parsing, or data-selection changes, independently discover consumers and trace representative values using [data-flow review](data-flow.md).
 Read beyond the diff to discover affected behavior, including unchanged consumers; the brief and changed-file list do not bound that discovery.
-Trace feature acceptance criteria through implementation chunks and acceptance evidence, whether planning is inline or separate.
+Trace feature acceptance criteria through implementation chunks and acceptance evidence.
 Check that combined behavior meets the feature's outcome; completed chunks alone do not prove completion.
 For code, check that passing tests prove the requested behavior and that the implementation preserves existing required behavior.
 

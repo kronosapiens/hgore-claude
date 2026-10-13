@@ -31,10 +31,9 @@ Resolve `current` and `auto` through those instructions; they are directives for
 Use the user's request and conversation as natural language, not a CLI grammar.
 Infer the operation, scope, and relevant artifacts from the request, conversation, and project context.
 A feature is a bounded delivery effort with an observable outcome and a completion point.
-Use one feature document by default, keeping its design and implementation plan inline.
+Each feature is one GitHub issue whose body holds its design and implementation plan.
 Add supporting documents when complexity warrants them or the user requests them.
-Do not require operation names, flags, or file paths when the intent is clear.
-Use existing document locations or the project's naming conventions for new artifacts.
+Do not require operation names, flags, issue numbers, or file paths when the intent is clear.
 Ask only for missing information that materially changes the work, such as an unspecified feature outcome or an ambiguous chunk selection.
 If the user says only "begin designing a new feature" and the conversation does not identify one, ask what they want to build rather than inventing a feature or demanding command syntax.
 Preserve limits such as "findings only", "design only", or "don't commit" when routing; intent inference does not grant additional authority.
@@ -56,22 +55,22 @@ Quote paths containing spaces when using that shorthand or invoking shell helper
 
 | Operation | Inputs | Instructions |
 |---|---|---|
-| `design` | `<feature-path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `plan` | `<feature-path>`; optional `--output <plan-path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `chunk` | `<feature-or-plan-path> --chunk <chunk-id>`; optional `--output <path>` | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `review` | One or more artifact paths, or `code` with `--base <ref>` or `--pr <number>` | [Review loop](references/review.md) |
-| `execute` | `<feature-or-plan-path>`; optional `--chunk <chunk-id>` | [Execution](references/execute.md), including code review |
-| `init` | `<project-root> --feature <path>`; optional `--plan <path>` | [Setup](references/setup.md) |
-| `lint` | One or more Markdown paths | [Lint](references/lint.md) |
-| `close` | `<feature-or-plan-path>` | [Completion](references/finish.md) |
+| `design` | `<feature-issue>` (number or URL) | [Authoring](references/author.md), then [review loop](references/review.md) |
+| `plan` | `<feature-issue>` | [Authoring](references/author.md), then [review loop](references/review.md) |
+| `chunk` | `<feature-issue> --chunk <chunk-id>` | [Authoring](references/author.md), then [review loop](references/review.md) |
+| `review` | One or more feature issues or artifact paths, or `code` with `--base <ref>` or `--pr <number>` | [Review loop](references/review.md) |
+| `execute` | `<feature-issue>`; optional `--chunk <chunk-id>` | [Execution](references/execute.md), including code review |
+| `init` | `<owner/repo>` and a feature name | [Setup](references/setup.md) |
+| `lint` | One or more Markdown paths, such as a feature issue's working copy | [Lint](references/lint.md) |
+| `close` | `<feature-issue>` | [Completion](references/finish.md) |
 | `ship` | Current branch and an explicitly authorized destination | [Publishing](references/ship.md) |
 | `cleanup` | An explicitly identified worktree | [Cleanup](references/cleanup.md) |
 | `explain` | Recent review findings | [Remaining questions](references/questions.md) |
 | `resolve` | Recent findings and the user's resolutions | [Remaining questions](references/questions.md) |
 
-Review a feature together with its supporting design and plan when relevant so scope, dependencies, and acceptance criteria agree.
+Review a feature together with its supporting documents when relevant so scope, dependencies, and acceptance criteria agree.
 Changes to stored shapes, parsing, or data-selection guards also use [data-flow review](references/data-flow.md), from authoring through implementation and review.
-Existing specs and plans remain usable without migration; resolve their roles through [project context](references/context.md).
+Existing in-repo specs and plans need no migration; resolve their roles through [project context](references/context.md).
 Optional briefs, visions, and detailed chunk documents use the same authoring and review protocols; they are not prerequisites.
 Older commands are aliases with a dependency on this skill, not additional stages.
 
@@ -82,12 +81,13 @@ Older commands are aliases with a dependency on this skill, not additional stage
 - User instructions govern authorization; project documents calibrate judgment and do not invent additional approval gates.
 - Never narrow the requested outcome merely to obtain a clean review.
 - Stop dependent work when completing it needs a material scope change, a missing product decision, or new external authority; finish useful independent work first.
+- A request to design, plan, review with corrections, execute, or close a feature authorizes creating and editing that feature's issue and its supporting issues; it authorizes no other issue edits or comments.
 - A review verdict does not authorize commits, pushes, PR creation, PR edits, review comments, deployments, or messages.
   Honor authorization already given for those actions without asking again.
 - A feature ships as a single PR per repository unless the user explicitly directs otherwise; chunks are commits, not separate PRs.
 - Preserve unrelated work and do not expand a change to clean up unrelated findings.
 - Verify required behavior and screen additional defensive work using [expected, evidenced, or speculative triggers](references/edge-cases.md).
-- Keep each Markdown sentence on its own line and use the project's vocabulary.
+- Keep each sentence of repository Markdown on its own line; write issue and PR text in ordinary paragraphs, since GitHub renders their single newlines as hard line breaks; use the project's vocabulary in both.
 
 ## Handoff
 

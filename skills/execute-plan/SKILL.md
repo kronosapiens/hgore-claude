@@ -10,7 +10,7 @@ Read [development-workflow](../development-workflow/SKILL.md) and follow its `ex
 Load its referenced instructions relative to that skill's directory, not this alias.
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
-Accept implementation chunks in the feature, a supporting plan, or a separate chunk document.
+Accept implementation chunks in the feature issue or a separate chunk document.
 Preserve whether the request covers one chunk or the whole feature.
 Do not require a PR before reviewing the implementation.
 

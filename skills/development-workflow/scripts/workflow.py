@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Small, offline helpers for configuration, scaffolding, and structural lint."""
+"""Small, offline helpers for configuration and structural lint."""
 
 from __future__ import annotations
 
@@ -7,9 +7,8 @@ import argparse
 import json
 import re
 import sys
-from os.path import relpath
 from pathlib import Path
-from urllib.parse import quote, unquote, urlsplit
+from urllib.parse import unquote, urlsplit
 
 
 BUNDLE = Path(__file__).resolve().parents[1]
@@ -25,44 +24,6 @@ def configuration() -> dict:
     if type(config["reviewer_count"]) is not int or config["reviewer_count"] not in (1, 2, 3):
         raise ValueError("reviewer_count must be 1, 2, or 3")
     return config
-
-
-def scaffold(root: Path, feature: Path, plan: Path | None = None) -> list[Path]:
-    root = root.resolve(strict=True)
-    if not root.is_dir():
-        raise ValueError(f"not a directory: {root}")
-    names = (feature,) if plan is None else (feature, plan)
-    destinations = [(root / name).resolve() for name in names]
-    if len(set(destinations)) != len(destinations):
-        raise ValueError("feature and plan must be different files")
-    if any(left in right.parents for left in destinations for right in destinations):
-        raise ValueError("neither destination may be a parent of the other")
-    for path in destinations:
-        if not path.is_relative_to(root) or path.suffix.lower() != ".md":
-            raise ValueError(f"expected a Markdown path inside {root}: {path}")
-        if path.exists():
-            raise ValueError(f"refusing to overwrite {path}")
-        for parent in path.parents:
-            if parent.exists() and not parent.is_dir():
-                raise ValueError(f"parent is not a directory: {parent}")
-    feature_path = destinations[0]
-    values = {
-        "title": feature_path.stem.replace("-", " ").capitalize(),
-        "implementation": "Use a short checklist of reviewable chunks, their dependencies, and acceptance evidence.\n"
-        "Track progress here as the work is implemented and verified.",
-    }
-    if plan is not None:
-        plan_path = destinations[1]
-        values["feature_link"] = quote(relpath(feature_path, plan_path.parent).replace("\\", "/"), safe="/")
-        plan_link = quote(relpath(plan_path, feature_path.parent).replace("\\", "/"), safe="/")
-        values["implementation"] = f"See the [implementation plan]({plan_link}) for chunks, dependencies, and progress."
-    for template, destination in zip(("feature.md", "plan.md"), destinations):
-        content = (BUNDLE / "templates" / template).read_text().format(**values)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        # Exclusive creation also protects files created after the preflight.
-        with destination.open("x", encoding="utf-8") as output:
-            output.write(content)
-    return destinations
 
 
 def prose_lines(text: str):
@@ -212,19 +173,12 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
     commands.add_parser("config", help="validate and display bundled model/budget defaults")
-    init_parser = commands.add_parser("init", help="create a feature and optional plan without overwriting")
-    init_parser.add_argument("root", type=Path)
-    init_parser.add_argument("--feature", type=Path, required=True)
-    init_parser.add_argument("--plan", type=Path)
     lint_parser = commands.add_parser("lint", help="check local links and explicit dependency tables")
     lint_parser.add_argument("paths", type=Path, nargs="+")
     args = parser.parse_args(argv)
     try:
         if args.command == "config":
             print(json.dumps(configuration(), indent=2))
-        elif args.command == "init":
-            for path in scaffold(args.root, args.feature, args.plan):
-                print(path)
         else:
             findings = [finding for path in args.paths for finding in lint(path)]
             print("\n".join(findings) if findings else "Structural lint passed.")
