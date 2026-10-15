@@ -84,7 +84,8 @@ Older commands are aliases with a dependency on this skill, not additional stage
 - A request to design, plan, review with corrections, execute, or close a feature authorizes creating and editing that feature's issue and its supporting issues; it authorizes no other issue edits or comments.
 - A review verdict does not authorize commits, pushes, PR creation, PR edits, review comments, deployments, or messages.
   Honor authorization already given for those actions without asking again.
-- A feature ships as a single PR per repository unless the user explicitly directs otherwise; chunks are commits, not separate PRs.
+- A feature ships as a single PR per repository unless the user explicitly directs otherwise; each chunk is one commit on the feature branch, and the PR opens once the feature is complete.
+  A request to execute a feature authorizes those local chunk commits; pushing and opening the PR still require authorization.
 - Preserve unrelated work and do not expand a change to clean up unrelated findings.
 - Verify required behavior and screen additional defensive work using [expected, evidenced, or speculative triggers](references/edge-cases.md).
 - Keep each sentence of repository Markdown on its own line; write issue and PR text in ordinary paragraphs, since GitHub renders their single newlines as hard line breaks; use the project's vocabulary in both.

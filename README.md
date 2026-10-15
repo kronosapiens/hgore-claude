@@ -114,6 +114,7 @@ An unfinished run retains a small checkpoint so interruption or handoff does not
 
 Local corrections are automatic within the requested workflow scope.
 Commits, pushes, PR creation or updates, comments, merges, and deployments require user authorization; a clean verdict grants none.
+A request to execute a feature authorizes one local commit per completed chunk on its feature branch; the PR opens once the feature is complete and authorized.
 A request to work on a feature authorizes creating and editing its issue and supporting issues, and no other issue edits or comments.
 A request to open a PR includes the necessary commit and push, without authorizing a merge or deployment.
 Deployment coordination belongs in PR notes; compatibility mechanisms follow the project's actual requirements.

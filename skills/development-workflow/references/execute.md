@@ -16,6 +16,7 @@ Inspect staged, unstaged, and untracked files first.
 Use the current checkout when its changes are separable from the task.
 An isolated worktree is optional when it helps concurrent work or protects overlapping user changes.
 Do not automatically copy credentials, provision services, start unrelated containers, or create a branch from an assumed `origin/main`.
+Before the first chunk, create or use the feature branch, based on the repository's actual default branch or the user's requested base.
 
 Implement the smallest coherent change that meets the chunk's acceptance criteria.
 When an implementer agent builds the chunk, the orchestrator writes it a brief: the outcome, the behaviors the chunk delivers, the files and the seams that must survive, the project rules that bite, the verification to run, and what to report back.
@@ -35,15 +36,16 @@ Verify required behavior and apply the [defensive-work standard](edge-cases.md) 
 Record baseline failures, unavailable services, and any unverified acceptance criteria honestly.
 A required check that remains unverified prevents a complete result.
 
-Run the [review loop](review.md) over the task's complete local diff, including its uncommitted files.
+Run the [review loop](review.md) over the chunk's diff from the previous chunk's commit, or from the branch base for the first chunk, including its uncommitted files.
 The loop applies accepted fixes and repeats automatically; the orchestrator re-runs checks affected by revisions.
 No PR is required to review code.
 If a PR already exists, inspect it read-only and include the current local changes in the review basis.
 Do not edit the PR body or publish review comments without authorization.
 
+Once the chunk's required checks pass and its code review is complete, commit it as one conventional commit, unless the user withheld commits.
 Check off chunk progress and record verification evidence in the feature issue, using the [editing procedure](context.md#select-and-edit-the-feature).
 A complete chunk does not mean the whole feature is complete.
 For a whole-feature request, advance only after the current chunk's required checks pass and its code review is complete.
 When the authorized feature scope is finished, follow [completion](finish.md) to verify the overall outcome and update maintained docs.
 Handoff the reviewed diff, acceptance evidence, important changes, and remaining questions when the requested scope is finished or cannot proceed.
-Proceed to [publishing](ship.md) only when the user has authorized it, including authorization already given for this task.
+Once the feature is complete, proceed to [publishing](ship.md) only when the user has authorized it, including authorization already given for this task.

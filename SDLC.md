@@ -57,4 +57,5 @@ Completed or explicitly abandoned runs release their temporary state; project ar
 
 Local corrections stay within the user's authorized scope.
 Commits, pushes, PR updates, comments, merges, and deployments require the appropriate user authorization, including authority already given.
+A request to execute a feature authorizes committing each completed chunk locally, not pushing or opening the PR.
 A passing review grants none, and this pack does not require repositories to make automated review verdicts merge-blocking.

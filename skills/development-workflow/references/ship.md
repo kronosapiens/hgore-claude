@@ -13,7 +13,7 @@ Do not publish code that has unresolved material review findings or required che
 
 1. Create or use the task's feature branch.
 2. Stage only the task's files and review the staged diff.
-3. Commit in coherent units using conventional prefixes.
+3. Commit any remaining task changes in coherent units using conventional prefixes; executed chunks are already committed.
    Put useful historical rationale in the commit body.
 4. Push to the authorized remote without force-pushing by default.
 5. Create the PR in the explicit repository, or update an existing PR only when that is authorized.
