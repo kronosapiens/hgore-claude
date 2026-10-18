@@ -1,4 +1,4 @@
-# Automated review and revision
+# Automated review and correction
 
 Read [reviewer.md](reviewer.md) and the relevant [perspectives](perspectives.md).
 Use the validated configuration and [model routing](models.md).
@@ -9,6 +9,12 @@ This file owns the review schedule, finding dispositions, stopping conditions, a
 Other workflow instructions refer here rather than defining separate versions of those rules.
 
 ## Review schedule
+
+For feature specs, designs, plans, and their supporting documents, use the [single spec and plan audit](#single-spec-and-plan-audit) by default.
+Audit the design and plan together against current code, with one independent reviewer focused on major issues.
+The user's prior spec review is context; do not require an approval marker or reconstruct that review history.
+Reuse a completed audit of the current scope when moving into execution or later chunks; neither stage transitions nor the audit's corrections trigger another document audit.
+Use the revision rounds, removal reviewer, and fresh final audit below for code review and for deeper document review only when the user explicitly requests it.
 
 Use the resolved `max_rounds` and `reviewer_count` from configuration for the revision phase.
 One reviewer serves a small change; otherwise use the configured count, selecting distinct perspectives when several reviewers run.
@@ -28,13 +34,13 @@ A fresh final audit runs only after the revision phase accepted a material findi
    A dirty tree is not itself a blocker when the task's changes can be separated.
 3. Run applicable deterministic lint or repository checks.
    Record pre-existing failures separately and use evidence when deciding whether a change caused them.
-4. Select perspectives for the reviewers under the schedule above.
+4. Select the audit or revision schedule above, then the relevant perspectives.
    Each reviewer reads the relevant project instructions, feature, maintained docs, and code directly.
    Optional project persona files supplement the bundled perspectives; their absence never blocks review.
 5. Create one temporary run directory in a permitted project scratch location, unless authoring already created it, and a small state file inside it.
    For example, use `mktemp -d "<project-root>/.development-workflow-run.XXXXXX"` and exclude that exact directory from staging.
    Do not assume a global temporary directory is within the host's deletion permissions.
-   Record canonical repository roots, artifact paths and hashes, a feature issue's number and [working copy](context.md#select-and-edit-the-feature) hash, or diff basis, authorization scope, configured models, round limit, and current round.
+   Record canonical repository roots, artifact paths and hashes, a feature issue's number and [working copy](context.md#select-and-edit-the-feature) hash, or diff basis, authorization scope, configured models, selected schedule, and audit progress or round limit and current round.
    Keep the current phase, completed and pending reviewer work, findings and dispositions, and verification results there to survive interruption or compaction.
    Store no credentials, source payloads, or copied project documentation in this state.
 
@@ -42,9 +48,24 @@ Temporary state is progress tracking for this run.
 It does not create binding decisions, suppress new findings, or replace current project documents.
 Resume and clean up state under the checkpoint lifecycle below.
 
+## Single spec and plan audit
+
+1. Launch one fresh reviewer with the [reviewer prompt](reviewer.md) marked `spec and plan audit`, the intended outcome, design and plan, relevant project paths, and verification evidence.
+   Do not supply the author's defense or prior verdicts.
+   The reviewer inspects the current code and reports only major issues: consequential contradictions, missing prerequisites, security or data-loss risks, and omissions that prevent the intended outcome.
+   Apply the [finding criteria](edge-cases.md#consequence-and-findings); skip stylistic suggestions, speculative concerns, removal suggestions, and alternative designs without a concrete failure.
+2. The orchestrator investigates and deduplicates findings, recording `accept`, `reject`, or `unresolved` with concise evidence.
+   Reject a finding on its facts, not because the user or an earlier reviewer approved the design.
+   Apply straightforward accepted corrections within the authorized scope and verify their factual basis against the code and relevant checks.
+   Keep coupled design and plan sections consistent without weakening the requested outcome or expanding scope.
+3. Surface a real product or scope decision to the user, and stop work dependent on any unresolved major finding while completing useful independent work.
+   Persist pending findings and corrections so resolution can resume without repeating the audit.
+4. Once findings are resolved or rejected with evidence and required checks pass, hand off or proceed into implementation under existing authorization.
+   There is no second document review round, separate removal reviewer, or fresh final audit, including after corrections.
+
 ## Revision rounds
 
-Run within the configured revision budget.
+For code or explicitly requested deeper document review, run within the configured revision budget.
 Do not return to the user between ordinary rounds.
 
 1. Increment and persist the round counter before launching a new revision round.
@@ -99,11 +120,11 @@ A material missing decision or external permission ends the dependent work; fini
 
 ## Result and human handoff
 
-- `ready for user review`: the final audit ran when one was due, required verification passed, and every material finding is resolved or rejected with evidence.
+- `ready for user review`: the selected schedule is complete, including the final audit when due under the revision schedule, required verification passed, and every material finding is resolved or rejected with evidence.
 - `needs input`: a material product/scope/authorization decision is required.
-- `review incomplete`: the budget ended with material findings, the final audit found an unresolved defect, required checks could not be completed, or independent reviewers were unavailable.
+- `review incomplete`: major audit findings remain unresolved, the revision budget ended with material findings, the final audit found an unresolved defect, required checks could not be completed, or independent reviewers were unavailable.
 
-Report the artifact or diff, consequential revisions, important rejected findings and their evidence, remaining questions, verification, round count, and configured/requested/observed models.
+Report the artifact or diff, consequential revisions, important rejected findings and their evidence, remaining questions, verification, audit or round count, and configured/requested/observed models.
 Include measured time and usage when the host exposes them; label unavailable cost or token figures as unavailable.
 Human approval concerns this mature result, not every intermediate suggestion.
 Include the retained checkpoint path for unfinished work under the lifecycle below.
@@ -118,6 +139,7 @@ Record what remains, why it stopped, its artifact basis, existing authorization,
 An incomplete handoff does not itself complete or abandon the run.
 
 On continuation, read the checkpoint, reconcile the current artifacts, and resume pending work with the remaining budget.
+For a single spec and plan audit, resume pending reviewer work, dispositions, or corrections without repeating a completed audit or adding revision rounds.
 Compaction, interruption, a new finding, or a missing checkpoint never grants a fresh budget; reconstruct known progress from the transcript when necessary.
 If artifacts changed externally, invalidate affected evidence without silently resetting the run.
 Do not re-run completed stages merely because the conversation restarted.

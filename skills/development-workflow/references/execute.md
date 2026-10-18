@@ -8,9 +8,9 @@ For a whole-feature request, continue through ready chunks and their review loop
 Check actual prerequisites in the code and available review evidence, not a mandatory approval marker or nonexistent brief.
 Verify required foundations before implementing dependent feature behavior.
 If a missing foundation emerges, revise the ordering and establish it within the authorized scope rather than duplicating it inside each consumer.
-If the selected work's current design and plan have not been reviewed, run the design review loop before implementation.
-The request to execute authorizes implementing the selected work after that review is ready.
-Do not continue into implementation from an incomplete design review.
+Use the [single spec and plan audit](review.md#single-spec-and-plan-audit) before implementation, reusing a completed audit of the current scope as directed by the [review schedule](review.md#review-schedule).
+The request to execute authorizes implementing the selected work after the audit's findings are resolved and required checks pass.
+An unresolved major finding blocks dependent work; continue useful independent work within the authorized scope.
 
 Inspect staged, unstaged, and untracked files first.
 Use the current checkout when its changes are separable from the task.

@@ -10,7 +10,7 @@ Read [development-workflow](../development-workflow/SKILL.md) and follow its `re
 Load its referenced instructions relative to that skill's directory, not this alias.
 Do not invoke a second skill or agent merely to forward the request; continue in the current orchestrator session.
 
-Research the evidence and apply accepted in-scope corrections through the bounded review loop.
+Research the evidence and apply accepted in-scope corrections under the selected review schedule.
 
 Interpret natural-language intent using the primary skill; explicit paths and arguments are optional shorthand.
 These aliases preserve command names, not the old mandatory artifact chain, flags, or cache formats.

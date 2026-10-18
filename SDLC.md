@@ -40,8 +40,12 @@ The orchestrator owns the artifact, finding dispositions, edits, and verificatio
 The current agent orchestrates; automatic selection prefers a cheaper capable implementer and chooses reviewers for independent critical review.
 Explicit model choices in the request or existing agent instructions take precedence over automatic selection; no project-specific configuration file is needed.
 Independent reviewers inspect raw evidence and try to falsify the proposed result without inheriting the author's defense.
-The bounded review procedure runs revision with a removal reviewer alongside it, and a fresh final audit after material fixes.
+Specs and plans receive one joint independent audit against current code for major issues, with corrections and verification handled by the orchestrator.
+Prior user review is context without an approval marker or reconstructed review history; a completed audit is reused when execution starts and across chunks.
+That audit has no repeat review round, removal reviewer, or final spec audit.
+Code review and explicitly requested deeper document review use bounded revision with a removal reviewer alongside it, and a fresh final audit after material fixes.
 Ordinary disagreements are investigated within that procedure; missing product decisions or authority are surfaced to the user.
+An unresolved major finding blocks dependent work while useful independent work can continue.
 
 Required behavior receives appropriate verification.
 Additional defensive machinery is screened as expected, evidenced, or speculative, then assessed by consequence and existing recovery.

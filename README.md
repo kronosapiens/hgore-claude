@@ -1,6 +1,6 @@
 # Development workflow for coding agents
 
-A fork of [hgorelick/hgore-claude](https://github.com/hgorelick/hgore-claude), organized around bounded features with automated adversarial review and revision.
+A fork of [hgorelick/hgore-claude](https://github.com/hgorelick/hgore-claude), organized around bounded features with a single spec and plan audit and iterative code review.
 The current agent orchestrates, choosing capable implementation and independent review agents through the host's native tools.
 Automatic implementation selection prefers a cheaper capable model; explicit choices in the request make runs more repeatable.
 The human reviews the revised result, not each initial disagreement.
@@ -53,7 +53,8 @@ The agent infers the feature, workflow stage, and relevant artifacts from your r
 If you say only "begin designing a new feature" without identifying one elsewhere, it asks what you want to build.
 Specify limits naturally, such as "findings only" or "design only"; choosing a workflow stage does not authorize additional actions.
 
-Authoring and execution include review and revision automatically.
+Authoring includes one independent audit of the spec and plan together, focused on major issues, with corrections handled by the orchestrator.
+Execution reuses that completed audit and includes iterative code review automatically.
 A separate review request is useful for existing artifacts or subsequent changes, not a mandatory duplicate stage.
 You can also ask it to create a feature issue, check links and dependencies, explain findings, or publish an explicitly authorized PR.
 
@@ -81,17 +82,21 @@ The default process is:
 
 1. Read project instructions, the selected feature, maintained docs, and actual code to calibrate scope and priorities.
 2. Define or revise the feature's design and implementation plan, inline by default.
-3. Follow the [bounded review procedure](skills/development-workflow/references/review.md), with revision, a removal reviewer alongside the first round, and an independent final audit after material fixes.
-4. Hand the mature result to the user, or continue only if the existing request already authorizes the next action.
+3. Run the [single spec and plan audit](skills/development-workflow/references/review.md#single-spec-and-plan-audit) against current code for major issues, then resolve and verify corrections in the main thread.
+4. Hand off the reviewed design, or proceed into implementation when already authorized, without another document review round or final spec audit.
+5. Review implemented code under the [bounded revision schedule](skills/development-workflow/references/review.md#review-schedule), including its removal reviewer and final audit after material fixes.
 
 Reviewers report evidence; the orchestrator adjudicates, applies accepted local corrections, and verifies them.
+The spec and plan audit accepts your prior review as context without requiring an approval marker or reconstructing review history.
+Deeper document review is available on explicit request.
 Unresolved material findings, missing decisions, or unavailable required checks are reported honestly.
+An unresolved major issue blocks dependent work while useful independent work can continue.
 Ordinary review disagreement does not require human arbitration.
 
 ## Configuration and authority
 
-[config.json](skills/development-workflow/config.json) ships with the skill and supplies its defaults: the current session orchestrates, implementation and review models are selected automatically, and the revision budget is two rounds with two reviewers.
-Small changes use one reviewer under the review procedure.
+[config.json](skills/development-workflow/config.json) ships with the skill and supplies its defaults: the current session orchestrates, implementation and review models are selected automatically, and code or explicitly requested deeper document review has a revision budget of two rounds with two reviewers.
+Small changes use one reviewer under that revision schedule; the default spec and plan audit always uses one reviewer once.
 
 The [review procedure](skills/development-workflow/references/review.md#review-schedule) explains how these settings determine the schedule.
 Supply model and budget overrides in the request, naming the desired implementation and review models and the revision round limit.

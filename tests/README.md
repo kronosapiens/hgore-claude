@@ -48,8 +48,16 @@ In a disposable project, give the installed skill a feature with inline design a
 Request review and local corrections, explicitly withholding permission to commit, push, or publish.
 Use the current orchestrator with explicitly selected available reviewers and a small spend limit when supported by the host.
 
-Check that reviewers independently inspect project context, the orchestrator adjudicates and corrects findings without intermediate human approval, corrected work receives independent review, and a fresh final audit runs if any material finding was accepted during the revision phase, even when a later round is clean, and is skipped otherwise.
-Confirm the round limit, authorization boundaries, checkpoint retention for unfinished work, cleanup after completion, and requested versus observed model reporting.
+Check that one independent reviewer audits the design and plan together against current code and reports only major issues, omitting style, speculation, and alternative designs without a concrete failure.
+The orchestrator should adjudicate findings, apply straightforward corrections, and verify them without another review round, removal reviewer, or final audit.
+Supply prior user review as context and confirm it requires no approval marker or reconstructed review history.
+Continue into authorized implementation and later chunks; the completed audit should not repeat.
+For a real product decision or unresolved major issue, check that dependent work stops while useful independent work proceeds.
+Interrupt after the auditor reports, then resume; it should finish dispositions and corrections without launching another auditor.
+
+Separately request code review or explicitly request deeper document review with material defects.
+Check that independent reviewers inspect project context, corrections receive independent review, the removal reviewer runs when applicable, and a fresh final audit runs if any material finding was accepted during the revision phase, even when a later round is clean, and is skipped otherwise.
+Confirm the revision round limit, authorization boundaries, checkpoint retention for unfinished work under either schedule, cleanup after completion, and requested versus observed model reporting.
 For closure, supply a feature whose chunks are marked done but whose combined acceptance check is unverified; it should remain incomplete until verified.
 After verified completion, check that doc updates preserve their intended role while recording the delivered outcome, and that later enhancements start a new feature.
 Repeat feature selection with a broad versioned spec in the repository; it should serve as context without forcing migration or advancing the spec version.

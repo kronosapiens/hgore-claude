@@ -1,13 +1,13 @@
 ---
 name: development-workflow
-description: Define, plan, implement, and close bounded features with automated adversarial review and revisions. Use for the requested development workflow or automated feature/design/plan/code review with revisions, not ordinary findings-only review, routine edits, or discussion alone.
+description: Define, plan, implement, and close bounded features with a single spec/plan audit and iterative code review. Use for the requested development workflow or automated feature/design/plan/code review with corrections, not ordinary findings-only review, routine edits, or discussion alone.
 ---
 
 # Development workflow
 
 The current agent orchestrates, selecting capable implementation and review agents through the host's native tools.
 It is an instruction-driven workflow using the host's agent tools, not a background scheduler.
-The user can review mature work after the agents have worked through the initial disagreements.
+Specs and plans receive one independent audit for major issues; code receives iterative review and correction.
 
 ## Start
 
@@ -55,10 +55,10 @@ Quote paths containing spaces when using that shorthand or invoking shell helper
 
 | Operation | Inputs | Instructions |
 |---|---|---|
-| `design` | `<feature-issue>` (number or URL) | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `plan` | `<feature-issue>` | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `chunk` | `<feature-issue> --chunk <chunk-id>` | [Authoring](references/author.md), then [review loop](references/review.md) |
-| `review` | One or more feature issues or artifact paths, or `code` with `--base <ref>` or `--pr <number>` | [Review loop](references/review.md) |
+| `design` | `<feature-issue>` (number or URL) | [Authoring](references/author.md), then [spec and plan audit](references/review.md#single-spec-and-plan-audit) |
+| `plan` | `<feature-issue>` | [Authoring](references/author.md), then [spec and plan audit](references/review.md#single-spec-and-plan-audit) |
+| `chunk` | `<feature-issue> --chunk <chunk-id>` | [Authoring](references/author.md), then [spec and plan audit](references/review.md#single-spec-and-plan-audit) |
+| `review` | One or more feature issues or artifact paths, or `code` with `--base <ref>` or `--pr <number>` | [Review procedure](references/review.md) |
 | `execute` | `<feature-issue>`; optional `--chunk <chunk-id>` | [Execution](references/execute.md), including code review |
 | `init` | `<owner/repo>` and a feature name | [Setup](references/setup.md) |
 | `lint` | One or more Markdown paths, such as a feature issue's working copy | [Lint](references/lint.md) |
@@ -72,6 +72,7 @@ Review a feature together with its supporting documents when relevant so scope, 
 Changes to stored shapes, parsing, or data-selection guards also use [data-flow review](references/data-flow.md), from authoring through implementation and review.
 Existing in-repo specs and plans need no migration; resolve their roles through [project context](references/context.md).
 Optional briefs, visions, and detailed chunk documents use the same authoring and review protocols; they are not prerequisites.
+Deeper document review uses the full revision loop only when explicitly requested.
 Older commands are aliases with a dependency on this skill, not additional stages.
 
 ## Working agreement

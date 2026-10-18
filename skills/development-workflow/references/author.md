@@ -14,12 +14,12 @@ For stored shapes, parsing, or data-selection changes, discover the producers an
 Keep present-tense rationale with the design it explains.
 Choose ordinary technical details from evidence and project guidance.
 Prefer an existing library over a hand-rolled adapter, client, parser, or protocol implementation; a design that hand-rolls one names the library it considered and why it does not serve.
-Explore significant alternatives when that improves the design, then let the automated review challenge the choice.
+Explore significant alternatives when that improves the design; the audit checks for concrete failures in the proposed choice.
 Name the cases that earn code and the costs the design declines by the [edge-case standard](edge-cases.md); do not enumerate every conceivable case, since each named case tends to become a code path, a test, and a finding.
 Only a genuine unresolved product choice or material scope change needs human input.
 
 When explicitly requested, an optional brief focuses on purpose and scope, and an optional vision focuses on product direction.
-They use the same review loop without creating additional mandatory layers.
+Include them in the same audit without creating additional mandatory layers.
 
 ## Implementation plan
 
@@ -46,8 +46,8 @@ Optional chunk authoring is a section edit unless the user requests a separate c
 
 Ground claims about existing files, APIs, and data in the current repository.
 Describe proposed interfaces as new work, not as existing anchors.
-Run [structural lint](lint.md), then the [automated review loop](review.md).
-The author's normal self-check is sufficient before that loop; do not run a second mandatory author-side tribunal.
-Review the feature and relevant supporting documents together when they are in scope.
+Run [structural lint](lint.md), then the [single spec and plan audit](review.md#single-spec-and-plan-audit), following the [review schedule](review.md#review-schedule) for completed audits or explicitly requested deeper review.
+The author's normal self-check is sufficient before that audit.
+Audit the feature's design, plan, and relevant supporting documents together when they are in scope.
 Keep required outcomes fixed through revisions unless the user changes them.
 Return the reviewed artifacts and consequential choices before starting implementation unless the user already authorized implementation.

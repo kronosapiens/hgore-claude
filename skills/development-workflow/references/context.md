@@ -19,7 +19,7 @@ Existing in-repo specs and plans remain readable project context, but new featur
 A broad or versioned spec is project context, not an instruction to implement every outstanding change or create the next version.
 Preserve explicit requests to review or edit an existing spec as scoped document work.
 
-To edit an issue body, fetch it to a working copy with `gh issue view <N> --json body -q .body > <copy>`, edit the copy, and push it back with `gh issue edit <N> --body-file <copy>` after each round of edits so the issue never lags the reviewed version.
+To edit an issue body, fetch it to a working copy with `gh issue view <N> --json body -q .body > <copy>`, edit the copy, and push it back with `gh issue edit <N> --body-file <copy>` after corrections so the issue never lags the reviewed version.
 Keep the working copy in the run directory that [the review procedure](review.md#establish-the-review) describes, creating that directory when authoring starts if no review has started.
 Reviewers and lint read the working copy; the review state records the issue number and the copy's hash as the artifact basis.
 GitHub caps an issue body at 65,536 characters; when the body would exceed it, the plan moves to the issue's first comment, edited by its id with `gh api -X PATCH repos/<owner>/<repo>/issues/comments/<id> -F body=@<copy>`.

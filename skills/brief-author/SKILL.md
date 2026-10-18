@@ -1,6 +1,6 @@
 ---
 name: brief-author
-description: Author an optional feature brief using the development-workflow review loop.
+description: Author an optional feature brief using the development-workflow audit.
 ---
 
 # brief-author

@@ -1,6 +1,8 @@
 # Reviewer prompt
 
 The orchestrator supplies this prompt with a perspective, the user's intended outcome, canonical project roots, artifact paths or diff basis, relevant project-document paths, and verification results.
+For a `spec and plan audit`, inspect the design and plan together against current code and report only major issues: consequential contradictions, missing prerequisites, security or data-loss risks, and omissions that prevent the intended outcome.
+In that audit, omit optional findings, stylistic suggestions, speculative concerns, removal suggestions, and alternative designs without a concrete failure; this focus takes precedence over broader perspective prompts.
 For a final audit, mark `final audit` and omit earlier findings and verdicts.
 For the removal reviewer, mark `removal`: report removals rather than defects, each with the evidence that nothing load-bearing depends on it.
 
